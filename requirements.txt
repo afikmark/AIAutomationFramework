@@ -1,5 +1,4 @@
 # Core Testing Framework
-playwright>=1.55.0
 pytest>=8.4.0
 pytest-playwright>=0.7.0
 

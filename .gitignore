@@ -1,0 +1,33 @@
+# Pytest cache
+.pytest_cache/
+*.pytest_cache
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv
+
+*.tmp/
