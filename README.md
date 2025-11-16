@@ -200,12 +200,25 @@ This project provides an AI-powered test generator via the MCP server, enabling 
    ```
    /mcp.automation_generator_mcp.GenerateTestRequest 
    ```
-   vscode will ask your for the user query, input something like:
-   `generate test for the cart page`
+   - Give an input like:
+      ```Generate tests for the Cart Page```
 
-4. **Review and Run Generated Tests**
+4. **The IDE will ask your for the user query:**
+![prompt_command](https://github.com/user-attachments/assets/5b6b7e77-ccad-4662-b835-dfae2f9193f9)
+5.  **It will then**:
+    * read relevant documentation about the product/feature
+      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/c3aee725-6a1b-486c-8697-44887909e53e" />
+    * read relevant documentation about the areas that needs to be modified
+      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/9dd3eae3-0441-4f97-9c8b-51351a6aac98" />  
+
+    * follow custom guidelines and design patterns on how to generate tests and POM
+    * Implement the new tests
+    * Execute them until success
+      <img width="752" height="543" alt="completed" src="https://github.com/user-attachments/assets/1ccb4a14-424d-4c21-92d9-2f1530c8bf8d" />
+
+
+6. **Review and Run Generated Tests**
    - Review the generated test code
-   - Run with `pytest` to verify correctness
 
 #### Best Practices
 * Always review generated code before committing
