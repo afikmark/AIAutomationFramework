@@ -74,22 +74,6 @@ Remember: You have access to ALL registered MCP servers.
     return PromptMessage(role="user", content=TextContent(type="text", text=content))
 
 
-# Cache for RAG instances to avoid recreating vector DBs
-
-
-def _load_feature_doc(feature_name: str) -> str:
-    """Load feature documentation from file."""
-    file_path = (
-        BASE_DIR.parent
-        / "contexts"
-        / "product_context_docs"
-        / f"saucedemo_{feature_name}.md"
-    )
-    if not file_path.exists():
-        return f"# Feature documentation not found for: {feature_name}"
-    return file_path.read_text(encoding="utf-8")
-
-
 @mcp.resource(
     uri="context://feature/{feature_name}",
     name="FeatureDocumentation",
