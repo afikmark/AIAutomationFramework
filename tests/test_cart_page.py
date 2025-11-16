@@ -53,9 +53,7 @@ def test_cart_displays_added_items(sauce_ui):
 
     sauce_ui.page.locator(".shopping_cart_link").click()
 
-    assert (
-        sauce_ui.cart_page.cart_items_count == 3
-    ), "Expected 3 items in cart"
+    assert sauce_ui.cart_page.cart_items_count == 3, "Expected 3 items in cart"
 
     item_names = sauce_ui.cart_page.get_cart_item_names()
     assert "Sauce Labs Backpack" in item_names, "Backpack should be in cart"
@@ -117,7 +115,9 @@ def test_cart_calculate_total(sauce_ui):
     total = sauce_ui.cart_page.calculate_total()
     # Backpack: $29.99, Bike Light: $9.99, Bolt T-Shirt: $15.99
     expected_total = 29.99 + 9.99 + 15.99
-    assert abs(total - expected_total) < 0.01, f"Expected total ~${expected_total}, got ${total}"
+    assert (
+        abs(total - expected_total) < 0.01
+    ), f"Expected total ~${expected_total}, got ${total}"
 
 
 def test_remove_item_from_cart(sauce_ui):
@@ -258,7 +258,9 @@ def test_remove_all_items_from_cart_clears_cart(sauce_ui):
     sauce_ui.cart_page.remove_item_by_name("Sauce Labs Bike Light")
     sauce_ui.cart_page.remove_item_by_name("Sauce Labs Bolt T-Shirt")
 
-    assert sauce_ui.cart_page.is_empty(), "Cart should be empty after removing all items"
+    assert (
+        sauce_ui.cart_page.is_empty()
+    ), "Cart should be empty after removing all items"
 
 
 def test_cart_item_count_matches_added_items(sauce_ui):
@@ -286,9 +288,7 @@ def test_cart_item_count_matches_added_items(sauce_ui):
 
     sauce_ui.page.locator(".shopping_cart_link").click()
 
-    assert (
-        sauce_ui.cart_page.cart_items_count == 4
-    ), "Cart should contain 4 items"
+    assert sauce_ui.cart_page.cart_items_count == 4, "Cart should contain 4 items"
 
 
 @pytest.mark.parametrize(
