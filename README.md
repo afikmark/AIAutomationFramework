@@ -212,12 +212,14 @@ This project provides an AI-powered test generator via the MCP server, enabling 
       <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/9dd3eae3-0441-4f97-9c8b-51351a6aac98" />  
 
     * follow custom guidelines and design patterns on how to generate tests and POM
+    * Generate Page Object if missing:
+      <img width="775" height="1203" alt="tests_with_page_object_creation" src="https://github.com/user-attachments/assets/f5c43d59-3c47-453c-8e38-9ae14c045647" />
     * Implement the new tests
     * Execute them until success
       <img width="752" height="543" alt="completed" src="https://github.com/user-attachments/assets/1ccb4a14-424d-4c21-92d9-2f1530c8bf8d" />
 
 
-6. **Review and Run Generated Tests**
+7. **Review and Run Generated Tests**
    - Review the generated test code
 
 #### Best Practices
