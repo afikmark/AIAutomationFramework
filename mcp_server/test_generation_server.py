@@ -36,7 +36,7 @@ STEP 2: Check Existing Code
 
 STEP 3: Discover Real Selectors (for NEW page objects only)
   ⚠️ DO NOT HALLUCINATE SELECTORS!
-    ✓ Use Chrome DevTools MCP to explore the live application
+    ✓ Use Chrome DevTools MCP to explore the live application (https://www.saucedemo.com/)
   ✅ Use snapshot UIDs and attributes to generate accurate locators
   ❌ Never invent selector values
 

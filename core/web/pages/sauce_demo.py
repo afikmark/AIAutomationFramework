@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 from .login_page import LoginPage
 from .inventory_page import InventoryPage
+from .cart_page import CartPage
 
 
 class SauceDemo:
@@ -31,3 +32,12 @@ class SauceDemo:
         if self._inventory_page is None:
             self._inventory_page = InventoryPage(self.page, self.base_url)
         return self._inventory_page
+
+    @property
+    def cart_page(self) -> CartPage:
+        """
+        Lazy initialization of CartPage.
+        """
+        if self._cart_page is None:
+            self._cart_page = CartPage(self.page, self.base_url)
+        return self._cart_page

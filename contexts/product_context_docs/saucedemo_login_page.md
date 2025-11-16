@@ -9,7 +9,6 @@ The Login Page is the gateway entry point to the Swag Labs (SauceDemo) applicati
 | Environment | URL / Path | Notes |
 |------------|------------|-------|
 | Production / Demo | https://www.saucedemo.com/ | Root landing → login page. |
-| Alternate version | https://www.saucedemo.com/v1/ | Used in internal test references. |
 
 When a user accesses the root domain, they land immediately on the login page if not authenticated. Upon successful login, the user is redirected to `/inventory.html`.
 
