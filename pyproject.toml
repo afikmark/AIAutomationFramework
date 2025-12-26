@@ -37,6 +37,7 @@ dependencies = [
 dev = [
     "black>=25.0.0",
     "mypy>=1.13.0",
+    "types-requests>=2.31.0",
 ]
 
 [build-system]
