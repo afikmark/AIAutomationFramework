@@ -52,7 +52,7 @@ This project represents a next-generation automation testing infrastructure that
 
 ### Prerequisites
 
-- Python 3.12 or higher
+- Python 3.12 or higher (managed via [uv](https://docs.astral.sh/uv/))
 - [Ollama](https://ollama.ai/) installed and running
 - Git
 
@@ -65,15 +65,11 @@ This project represents a next-generation automation testing infrastructure that
 git clone https://github.com/afikmark/AIAutomationFramework.git
 cd AIAutomationFramework
 
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies and create virtual environment with uv
+uv sync --python 3.12
 
 # Install Playwright browsers
-playwright install
+uv run playwright install
 
 # Pull required Ollama models
 ollama pull llama3.1:8b
@@ -87,15 +83,11 @@ ollama pull llama3
 git clone https://github.com/afikmark/AIAutomationFramework.git
 cd AIAutomationFramework
 
-# Create virtual environment
-python -m venv .venv
-.venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies and create virtual environment with uv
+uv sync --python 3.12
 
 # Install Playwright browsers
-playwright install
+uv run playwright install
 
 # Pull required Ollama models
 ollama pull llama3.1:8b
@@ -184,12 +176,10 @@ This project provides AI-powered test generators via the MCP server, enabling yo
 
    ```bash
    # Linux/macOS
-   source .venv/bin/activate
-   python mcp_server/test_generation_server.py
+   uv run python mcp_server/test_generation_server.py
 
    # Windows
-   .venv\Scripts\activate
-   python mcp_server\test_generation_server.py
+   uv run python mcp_server\test_generation_server.py
    ```
 
 2. **Configure VS Code for MCP**
@@ -265,16 +255,16 @@ This project provides AI-powered test generators via the MCP server, enabling yo
 
 ```bash
 # Run all tests
-pytest
+uv run pytest
 
 # Run specific test file
-pytest tests/test_login_page.py
+uv run pytest tests/test_login_page.py
 
 # Run with verbose output
-pytest -v -s
+uv run pytest -v -s
 
 # Run specific test
-pytest tests/test_login_page.py::test_login_with_valid_credentials -v
+uv run pytest tests/test_login_page.py::test_login_with_valid_credentials -v
 
 ```
 
@@ -284,7 +274,7 @@ The project includes an MCP server for test generation:
 
 ```bash
 # Start the MCP server
-python mcp_server/test_generation_server.py
+uv run python mcp_server/test_generation_server.py
 ```
 
 ### Using the MCP Server with GitHub Copilot

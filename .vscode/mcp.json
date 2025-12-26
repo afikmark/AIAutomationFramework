@@ -1,0 +1,31 @@
+{
+  "servers": {
+    "automation_generator_mcp": {
+      "type": "stdio",
+      "command": "/home/afik/Dev/AIAutomationFramework/.venv/bin/python",
+      "args": [
+        "/home/afik/Dev/AIAutomationFramework/mcp_server/test_generation_server.py"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "postman-api-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@postman/postman-mcp-server", "--code", "--region", "us"],
+      "env": {
+        "POSTMAN_API_KEY": "${input:postman-api-key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "postman-api-key",
+      "type": "promptString",
+      "description": "Enter your Postman API key",
+      "password": true
+    }
+  ]
+}
