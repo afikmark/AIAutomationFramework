@@ -6,7 +6,7 @@ import pytest
 from typing import Generator
 from playwright.sync_api import sync_playwright, Page, Browser
 from dotenv import load_dotenv
-
+from core.controllers.pet_store_controller import PetStoreController
 from core.web.pages.sauce_demo import SauceDemo
 
 load_dotenv()
@@ -59,3 +59,15 @@ def sauce_ui(page: Page) -> SauceDemo:
         SauceDemo: SauceDemo instance with all page objects
     """
     return SauceDemo(page)
+
+
+@pytest.fixture(scope="function")
+def pet_store_controller() -> PetStoreController:
+    """
+    Fixture that provides a PetStoreController instance.
+
+    Returns:
+        PetStoreController: PetStoreController instance
+    """
+
+    return PetStoreController()

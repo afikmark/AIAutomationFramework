@@ -176,7 +176,7 @@ Check the Copilot MCP status in VS Code:
 
 ## 🤖 Test Generator Usage
 
-This project provides an AI-powered test generator via the MCP server, enabling you to generate Playwright tests using project-specific guidelines and feature documentation directly from VS Code with GitHub Copilot.
+This project provides AI-powered test generators via the MCP server, enabling you to generate both Playwright UI tests and API tests using project-specific guidelines and documentation directly from VS Code with GitHub Copilot.
 
 ### How to Use the Test Generator
 
@@ -195,29 +195,61 @@ This project provides an AI-powered test generator via the MCP server, enabling 
 2. **Configure VS Code for MCP**
    - Ensure `.vscode/mcp.json` is set up as described in the Configuration section.
 
-3. **Generate Tests with Copilot**
-   - In a Copilot chat, use predefined prompt:
+### Generating Web UI Tests
+
+3. **Generate UI Tests with Copilot**
+   - In a Copilot chat, use the predefined prompt:
    ```
-   /mcp.automation_generator_mcp.GenerateTestRequest 
+   /mcp.automation_generator_mcp.GenerateWebTestRequest 
    ```
    - Give an input like:
       ```Generate tests for the Cart Page```
 
-4. **The IDE will ask your for the user query:**
+4. **The IDE will ask for the user query:**
 ![prompt_command](https://github.com/user-attachments/assets/5b6b7e77-ccad-4662-b835-dfae2f9193f9)
-5.  **It will then**:
-    * read relevant documentation about the product/feature
-      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/c3aee725-6a1b-486c-8697-44887909e53e" />
-    * read relevant documentation about the areas that needs to be modified
-      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/9dd3eae3-0441-4f97-9c8b-51351a6aac98" />  
 
-    * follow custom guidelines and design patterns on how to generate tests and POM
+5. **It will then**:
+    * Read relevant documentation about the product/feature
+      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/c3aee725-6a1b-486c-8697-44887909e53e" />
+    * Read relevant documentation about the areas that need to be modified
+      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/9dd3eae3-0441-4f97-9c8b-51351a6aac98" />  
+    * Follow custom guidelines and design patterns on how to generate tests and POM
     * Generate Page Object if missing:
       <img width="775" height="1203" alt="tests_with_page_object_creation" src="https://github.com/user-attachments/assets/f5c43d59-3c47-453c-8e38-9ae14c045647" />
     * Implement the new tests
     * Execute them until success
       <img width="752" height="543" alt="completed" src="https://github.com/user-attachments/assets/1ccb4a14-424d-4c21-92d9-2f1530c8bf8d" />
 
+### Generating API Tests
+
+3. **Generate API Tests with Copilot**
+   - In a Copilot chat, use the predefined prompt:
+   ```
+   /mcp.automation_generator_mcp.GenerateApiTestRequest
+   ```
+   - Give an input like:
+      ```Generate tests for the Pet Store user creation endpoint```
+
+4. **The MCP server will**:
+   * Retrieve API endpoint documentation (Pet Store user, pet, store endpoints)
+   * Load API testing guidelines and patterns
+   * Check existing controllers and schemas
+   * Generate Pydantic request/response models if needed
+   * Create controller methods for the endpoint
+   * Generate pytest tests with proper assertions
+   * Use the `pet_cleanup` fixture for test isolation
+   * Run tests and fix any issues
+
+5. **Example Generated Structure**:
+   ```
+   core/
+     controllers/pet_store_controller.py  # API client with typed methods
+     schemas/pet_store_pet.py             # Pydantic models
+   tests/
+     pet_store_api/
+       conftest.py                        # Cleanup fixtures
+       test_pet_store_pet.py              # Generated tests
+   ```
 
 7. **Review and Run Generated Tests**
    - Review the generated test code
@@ -226,6 +258,7 @@ This project provides an AI-powered test generator via the MCP server, enabling 
 * Always review generated code before committing
 * Use specific prompts for best results (mention feature and guideline)
 * Run tests after generation to ensure they pass
+* For API tests, the cleanup fixture automatically removes test data
 
 
 ### Running Tests
