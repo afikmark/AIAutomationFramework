@@ -207,12 +207,7 @@ def get_api_documentation(api_name: str) -> str:
     - pet_store_store
     - pet_store_user
     """
-    file_path = (
-        BASE_DIR.parent
-        / "contexts"
-        / "product_context_docs"
-        / f"{api_name}.md"
-    )
+    file_path = BASE_DIR.parent / "contexts" / "product_context_docs" / f"{api_name}.md"
     if not file_path.exists():
         return f"# API documentation not found for: {api_name}"
     return file_path.read_text(encoding="utf-8")
