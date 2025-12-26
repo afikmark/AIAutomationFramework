@@ -33,5 +33,6 @@ ENV/
 
 # Environment variables
 .env
-
+# Temporary files
 *.tmp/
+/tmp/*
