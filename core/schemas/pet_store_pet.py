@@ -62,3 +62,16 @@ class PetStoreGetPetResponse(BaseModel):
     def from_response(cls, response: Response) -> "PetStoreGetPetResponse":
         """Create response model from requests.Response object"""
         return cls.model_validate_json(response.text)
+
+
+class PetStoreDeletePetResponse(BaseModel):
+    """Response model for deleting a pet"""
+
+    code: int = Field(..., description="Response code")
+    type: str = Field(..., description="Response type")
+    message: str = Field(..., description="Response message")
+
+    @classmethod
+    def from_response(cls, response: Response) -> "PetStoreDeletePetResponse":
+        """Create response model from requests.Response object"""
+        return cls.model_validate_json(response.text)

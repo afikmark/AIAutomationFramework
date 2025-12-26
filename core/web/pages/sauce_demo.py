@@ -9,9 +9,9 @@ class SauceDemo:
         self._checkout_multi_page = None
         self.page = page
         self.base_url = "https://www.saucedemo.com/v1"
-        self._login_page = None
-        self._inventory_page = None
-        self._cart_page = None
+        self._login_page: LoginPage | None = None
+        self._inventory_page: InventoryPage | None = None
+        self._cart_page: CartPage | None = None
         self._checkout_page = None
 
     @property

@@ -19,7 +19,7 @@ def pet_cleanup(
     Yields:
         List to track pet IDs for cleanup
     """
-    pet_ids = []
+    pet_ids: list[int] = []
 
     yield pet_ids
 

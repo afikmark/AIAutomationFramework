@@ -10,6 +10,7 @@ from core.schemas.pet_store_pet import (
     PetStoreAddPetRequest,
     PetStoreAddPetResponse,
     PetStoreGetPetResponse,
+    PetStoreDeletePetResponse,
 )
 
 load_dotenv()
@@ -117,7 +118,7 @@ class PetStoreController:
         response.raise_for_status()
         return PetStoreGetPetResponse.from_response(response)
 
-    def delete_pet(self, pet_id: int) -> dict:
+    def delete_pet(self, pet_id: int) -> PetStoreDeletePetResponse:
         """
         Delete a pet from the store
 
@@ -125,10 +126,10 @@ class PetStoreController:
             pet_id: ID of pet to delete
 
         Returns:
-            Dictionary with deletion response
+            PetStoreDeletePetResponse with deletion response
         """
         url = f"{self.BASE_URL}/pet/{pet_id}"
         headers = {"api_key": self.api_key}
         response = self.session.delete(url, headers=headers)
         response.raise_for_status()
-        return response.json()
+        return PetStoreDeletePetResponse.from_response(response)
