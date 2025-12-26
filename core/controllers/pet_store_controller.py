@@ -131,4 +131,5 @@ class PetStoreController:
         headers = {"api_key": self.api_key}
         response = self.session.delete(url, headers=headers)
         response.raise_for_status()
-        return response.json()
+        result: dict[str, str] = response.json()
+        return result
