@@ -5,6 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![Playwright](https://img.shields.io/badge/Playwright-Latest-green.svg)](https://playwright.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PR Gate](https://img.shields.io/badge/PR%20Gate-Enabled-success.svg)](https://github.com/afikmark/AIAutomationFramework/actions)
 
 ---
 
