@@ -36,6 +36,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "black>=25.0.0",
+    "mypy>=1.13.0",
 ]
 
 [build-system]
@@ -55,3 +56,6 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
+markers = [
+    "sanity: Fast smoke tests for PR validation",
+]

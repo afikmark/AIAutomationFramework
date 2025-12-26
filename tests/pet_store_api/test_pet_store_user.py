@@ -1,9 +1,7 @@
 from core.controllers.pet_store_controller import PetStoreController
-from core.schemas.pet_store_login import PetStoreLoginRequest, PetStoreLoginResponse
-from core.schemas.pet_store_user_creation import (
-    PetStoreUserCreateRequest,
-    PetStoreUserCreateResponse,
-)
+from core.schemas.pet_store_login import PetStoreLoginRequest
+from core.schemas.pet_store_user_creation import PetStoreUserCreateRequest
+import pytest
 
 
 def test_user_creation(
@@ -32,6 +30,7 @@ def test_user_creation(
     assert response.message == "12345", "Unexpected response message"
 
 
+@pytest.mark.sanity
 def test_user_login(
     pet_store_controller: PetStoreController,
 ) -> None:
