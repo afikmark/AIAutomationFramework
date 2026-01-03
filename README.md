@@ -1,24 +1,62 @@
-# AI-Driven Automation Infrastructure
+# AI-Driven Test Automation Framework
 
-> An intelligent automation testing infrastructure that leverages AI capabilities including Agentic AI workflows, RAG (Retrieval-Augmented Generation), and MCP (Model Context Protocol) servers generate automated tests
+> An end-to-end AI-powered test automation framework featuring agentic workflows, custom MCP servers, and GitHub Copilot integration for intelligent test generation, management, and code review
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![Playwright](https://img.shields.io/badge/Playwright-Latest-green.svg)](https://playwright.dev/)
+[![Pytest](https://img.shields.io/badge/Pytest-9.0%2B-orange.svg)](https://pytest.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PR Gate](https://img.shields.io/badge/PR%20Gate-Enabled-success.svg)](https://github.com/afikmark/AIAutomationFramework/actions)
+[![MCP](https://img.shields.io/badge/MCP-Enabled-brightgreen.svg)](https://modelcontextprotocol.io/)
 
 ---
 
 ## 🎯 Overview
 
-This project represents a next-generation automation testing infrastructure that combines traditional test automation with cutting-edge AI technologies. It automatically identifies UI elements using natural language, and leverages intelligent caching strategies for optimal performance.
+This project demonstrates a complete AI-driven test automation workflow, from test design through deployment. By integrating Model Context Protocol (MCP) servers, GitHub Copilot Agents, and custom prompts, it enables AI assistants to generate production-ready tests following project-specific architecture patterns and best practices.
 
+### 🚀 Complete AI-Agentic Workflow
 
-### Key Features
+**📋 Test Design** → **📊 Test Management** → **🤖 Test Generation** → **🔍 Code Review** → **🚀 Deployment**
 
-- **🔌 MCP Server Integration**: Model Context Protocol server for AI-powered test generation and management
-- **🎭 Playwright Integration**: Reliable cross-browser automation
-- **⚡ Smart Caching**: Multi-level caching for optimal performance
+1. **📋 Test Design** - Define test requirements and scenarios using AI agents
+2. **📊 Test Management** - Create and manage test cases in Jira & Xray via GraphQL API
+3. **🤖 Test Generation** - AI-powered test creation using architecture guidelines and feature docs
+4. **🔍 Code Review** - Automated review following best practices and conventions
+5. **🚀 Deployment** - CI/CD ready with proper git workflows and conventional commits
+
+---
+
+## ✨ Key Features
+
+### 🔌 Custom MCP Servers
+
+#### 1. **Test Context Server**
+Provides AI agents with access to:
+- Architecture guidelines (Page Object Model, fixtures, component patterns)
+- Feature documentation (UI and API specifications)
+- Test generation templates and best practices
+
+#### 2. **Xray Test Management Server**
+Integrates with Jira/Xray via GraphQL:
+- Create and manage test cases
+- Execute test runs and update test status (PASS/FAIL/TODO/EXECUTING)
+- Link tests to test plans and executions
+- Query test metadata and coverage
+- Retrieve test execution details and results
+
+### 🤖 GitHub Copilot Integration
+
+- **Custom Agents**: Specialized AI agents for different automation tasks
+- **Custom Prompts**: Pre-configured prompts for common workflows (test generation, code review, git operations)
+- **Context-Aware**: Agents understand your project's architecture patterns
+
+### 🎭 Test Automation Stack
+
+- **UI Testing**: Playwright with Page Object Model
+- **API Testing**: RESTful API testing with Pydantic validation
+- **Test Management**: Pytest with Xray integration
+- **Browser Support**: Chromium, Firefox, WebKit
+
 ---
 
 ## 🛠️ Tech Stack
@@ -29,23 +67,25 @@ This project represents a next-generation automation testing infrastructure that
 |------------|---------|---------|
 | **Python** | Primary language | 3.12+ |
 | **Playwright** | Browser automation | Latest |
-| **LangChain** | AI orchestration | Latest |
-| **Ollama** | Local LLM inference | Latest |
-| **Chroma** | Vector database | Latest |
-| **Tenacity** | Retry logic | 9.1.2 |
+| **Pytest** | Testing framework | 9.0+ |
+| **Pydantic** | Data validation | Latest |
+| **Requests** | HTTP client | Latest |
 
+### MCP & AI Integration
 
-### AI & ML Stack
+| Component | Purpose |
+|-----------|---------|
+| **MCP Servers** | Context provision for AI agents |
+| **GitHub Copilot** | AI-powered code generation |
+| **Custom Agents** | Specialized automation assistants |
 
-- **LLM**: Llama 3.1 (8B parameter model)
-- **Embeddings**: Ollama embeddings (llama3)
-- **RAG**: LangChain + Chroma for semantic search
+### Test Management
 
-### Testing & Development
-
-- **Pytest**: Testing framework
-- **Pydantic**: Data validation
-- **Python-dotenv**: Environment management
+| Tool | Purpose |
+|------|---------|
+| **Jira** | Test case management |
+| **Xray** | Test execution & reporting |
+| **GraphQL** | API integration |
 
 ---
 
@@ -54,8 +94,8 @@ This project represents a next-generation automation testing infrastructure that
 ### Prerequisites
 
 - Python 3.12 or higher (managed via [uv](https://docs.astral.sh/uv/))
-- [Ollama](https://ollama.ai/) installed and running
 - Git
+- Visual Studio Code (for GitHub Copilot integration)
 
 ### Installation
 
@@ -71,10 +111,6 @@ uv sync --python 3.12
 
 # Install Playwright browsers
 uv run playwright install
-
-# Pull required Ollama models
-ollama pull llama3.1:8b
-ollama pull llama3
 ```
 
 #### **Windows**
@@ -89,10 +125,6 @@ uv sync --python 3.12
 
 # Install Playwright browsers
 uv run playwright install
-
-# Pull required Ollama models
-ollama pull llama3.1:8b
-ollama pull llama3
 ```
 
 ---
@@ -101,200 +133,308 @@ ollama pull llama3
 
 ### 1. Environment Setup
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory based on `.env.example`:
 
 ```bash
-# Optional: API keys if using external LLMs
-# OPENAI_API_KEY=your_key_here
-# ANTHROPIC_API_KEY=your_key_here
-# GOOGLE_API_KEY=your_key_here
+# Copy the example file and update with your credentials
+cp .env.example .env
 ```
 
-###  MCP Server Configuration for VS Code & GitHub Copilot
+Then edit `.env` with your actual credentials:
+- `JIRA_TOKEN` - Your Jira API token for authentication
+- `XRAY_CLIENT_ID` - Xray Cloud client ID (if using Xray Cloud)
+- `XRAY_CLIENT_SECRET` - Xray Cloud client secret
+- `POSTMAN_API_KEY` - Postman API key for collection management
+- `PET_STORE_API_KEY` - Pet Store API key (if required)
 
-The project includes a Model Context Protocol (MCP) server that enables GitHub Copilot to generate tests using project-specific guidelines and feature documentation.
+### 2. MCP Server Configuration for VS Code & GitHub Copilot
 
-#### **Step 1: Configure VS Code MCP Settings**
+The project includes two custom MCP servers that enable GitHub Copilot to:
+- Generate tests using project-specific architecture guidelines
+- Manage test cases in Jira/Xray
+- Follow Page Object Model patterns
+- Handle test execution results
+
+#### **Configure VS Code MCP Settings**
 
 Create or update `.vscode/mcp.json` in your workspace:
 
 ```json
 {
   "servers": {
-    "automation_generator_mcp": {
+    "test-context-server": {
       "type": "stdio",
-      "command": "{WORKSPACE}/AIAutomationFramework/.venv/bin/python",
+      "command": "/absolute/path/to/AIAutomationFramework/.venv/bin/python",
       "args": [
-        "{WORKSPACE}/AIAutomationFramework/mcp_server/test_generation_server.py"
-      ]
+        "/absolute/path/to/AIAutomationFramework/mcp_server/test_context_server.py"
+      ],
+      "description": "Provides architecture guidelines and feature documentation for test generation"
+    },
+    "xray-server": {
+      "type": "stdio",
+      "command": "/absolute/path/to/AIAutomationFramework/.venv/bin/python",
+      "args": [
+        "/absolute/path/to/AIAutomationFramework/mcp_server/xray_server.py"
+      ],
+      "env": {
+        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
+        "JIRA_EMAIL": "your-email@example.com",
+        "JIRA_API_TOKEN": "your_api_token"
+      },
+      "description": "Xray test management operations via GraphQL API"
     },
     "chrome-devtools": {
+      "type": "stdio",
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "description": "Chrome DevTools for element selector discovery"
     }
-  },
-  "inputs": []
+  }
 }
-
 ```
 
-**Important**: Update the paths to match your actual workspace location:
+**Important**: 
+- Replace `/absolute/path/to/AIAutomationFramework` with your actual project path
 - **Linux/macOS**: Use `.venv/bin/python`
 - **Windows**: Use `.venv\Scripts\python.exe`
+- Update Xray credentials in the `env` section
 
-#### **Step 2: Start the MCP Server**
+#### **Available MCP Tools**
 
-The MCP server will automatically start when GitHub Copilot initializes. You can also start it manually:
+**Test Context Server:**
+- `get_architecture_guidelines` - Retrieve test patterns (Page Object Model, fixtures, components)
+- `get_feature_context` - Get feature documentation for UI/API endpoints
+- `list_available_contexts` - List all available documentation
 
-```bash
-# Linux/macOS
-source .venv/bin/activate
-python mcp_server/test_generation_server.py
-
-# Windows
-.venv\Scripts\activate
-python mcp_server\test_generation_server.py
-```
-
-#### **Step 3: Verify MCP Server is Running**
-
-Check the Copilot MCP status in VS Code:
-1. Open VS Code Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
-2. Search for "MCP: Show Server Status"
-3. Verify that `automation_generator_mcp` is listed and running
+**Xray Server:**
+- `xray_create_test_execution` - Create new test execution in Xray
+- `xray_get_test_execution` - Retrieve test execution details
+- `xray_update_test_run_status` - Update test result (PASS/FAIL/TODO/EXECUTING)
+- `xray_get_test` - Get test case details
+- `xray_get_test_plan` - Retrieve test plan information
+- Additional tools for test management (see [xray_server.py](mcp_server/xray_server.py))
 
 ---
 
 ## 📖 Usage
 
-## 🤖 Test Generator Usage
+### 🤖 AI-Powered Test Generation Workflow
 
-This project provides AI-powered test generators via the MCP server, enabling you to generate both Playwright UI tests and API tests using project-specific guidelines and documentation directly from VS Code with GitHub Copilot.
+The framework provides intelligent test generation through GitHub Copilot Agents with custom prompts and MCP context.
 
-### How to Use the Test Generator
+#### **Step 1: Choose an Agent**
 
-1. **Start the MCP Server**
+Select a GitHub Copilot Agent from `.github/agents/`:
+- **Jira QA Agent** - For test design and Jira integration
+- **Test Generation Agent** - For creating tests with architecture patterns
+- **Code Review Agent** - For reviewing code against best practices
+- **Git Operations Agent** - For managing git workflows
 
-   ```bash
-   # Linux/macOS
-   uv run python mcp_server/test_generation_server.py
+#### **Step 2: Use Custom Prompts**
 
-   # Windows
-   uv run python mcp_server\test_generation_server.py
-   ```
+Reference prompt files in your conversation with the agent:
 
-2. **Configure VS Code for MCP**
-   - Ensure `.vscode/mcp.json` is set up as described in the Configuration section.
+**Example: Test Design with Jira QA Agent**
+```
+@jira-qa-agent
+Generate test scenarios for the checkout page feature
 
-### Generating Web UI Tests
+#file:test-design.prompt.md
+```
 
-3. **Generate UI Tests with Copilot**
-   - In a Copilot chat, use the predefined prompt:
-   ```
-   /mcp.automation_generator_mcp.GenerateWebTestRequest 
-   ```
-   - Give an input like:
-      ```Generate tests for the Cart Page```
+**Example: Generate Tests**
+```
+@test-generation-agent
+Create comprehensive tests for the Cart Page following architecture guidelines
 
-4. **The IDE will ask for the user query:**
-![prompt_command](https://github.com/user-attachments/assets/5b6b7e77-ccad-4662-b835-dfae2f9193f9)
+#file:test-generation.prompt.md
+```
 
-5. **It will then**:
-    * Read relevant documentation about the product/feature
-      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/c3aee725-6a1b-486c-8697-44887909e53e" />
-    * Read relevant documentation about the areas that need to be modified
-      <img width="746" height="422" alt="reading_context" src="https://github.com/user-attachments/assets/9dd3eae3-0441-4f97-9c8b-51351a6aac98" />  
-    * Follow custom guidelines and design patterns on how to generate tests and POM
-    * Generate Page Object if missing:
-      <img width="775" height="1203" alt="tests_with_page_object_creation" src="https://github.com/user-attachments/assets/f5c43d59-3c47-453c-8e38-9ae14c045647" />
-    * Implement the new tests
-    * Execute them until success
-      <img width="752" height="543" alt="completed" src="https://github.com/user-attachments/assets/1ccb4a14-424d-4c21-92d9-2f1530c8bf8d" />
+**Example: Code Review**
+```
+@code-review-agent
+Review the test files in tests/sauce_ui/ directory
 
-### Generating API Tests
+#file:code-review.prompt.md
+```
 
-3. **Generate API Tests with Copilot**
-   - In a Copilot chat, use the predefined prompt:
-   ```
-   /mcp.automation_generator_mcp.GenerateApiTestRequest
-   ```
-   - Give an input like:
-      ```Generate tests for the Pet Store user creation endpoint```
+**Example: Git Operations**
+```
+@git-operations-agent
+Stage and commit the new test files with conventional commit message
 
-4. **The MCP server will**:
-   * Retrieve API endpoint documentation (Pet Store user, pet, store endpoints)
-   * Load API testing guidelines and patterns
-   * Check existing controllers and schemas
-   * Generate Pydantic request/response models if needed
-   * Create controller methods for the endpoint
-   * Generate pytest tests with proper assertions
-   * Use the `pet_cleanup` fixture for test isolation
-   * Run tests and fix any issues
+#file:git-operations.prompt.md
+```
 
-5. **Example Generated Structure**:
-   ```
-   core/
-     controllers/pet_store_controller.py  # API client with typed methods
-     schemas/pet_store_pet.py             # Pydantic models
-   tests/
-     pet_store_api/
-       conftest.py                        # Cleanup fixtures
-       test_pet_store_pet.py              # Generated tests
-   ```
+#### **Step 3: AI Agent Workflow**
 
-7. **Review and Run Generated Tests**
-   - Review the generated test code
+The agent will automatically:
+1. Load the referenced prompt instructions
+2. Access relevant context via MCP servers (guidelines, feature docs)
+3. Generate or review code following project patterns
+4. Execute tests to validate functionality
+5. Update Xray test results (if configured)
 
-#### Best Practices
-* Always review generated code before committing
-* Use specific prompts for best results (mention feature and guideline)
-* Run tests after generation to ensure they pass
-* For API tests, the cleanup fixture automatically removes test data
+### 🎯 Complete Example: End-to-End Test Creation
 
+**1. Design Tests (Jira QA Agent)**
+```
+@jira-qa-agent
+I need to create test cases for user login functionality including:
+- Valid credentials
+- Invalid credentials  
+- Locked out users
+- Performance glitch scenario
 
-### Running Tests
+Create test cases in Jira project DEV and add to test plan DEV-10
+
+#file:test-design.prompt.md
+```
+
+**2. Generate Tests (Test Generation Agent)**
+```
+@test-generation-agent
+Generate pytest tests for the login page test cases we just created in Jira.
+Follow Page Object Model pattern and use the logged_in_user fixture where appropriate.
+
+#file:test-generation.prompt.md
+```
+
+**3. Review Code (Code Review Agent)**  
+```
+@code-review-agent
+Review the newly generated login page tests for:
+- Architecture compliance
+- Best practices
+- Test coverage
+
+#file:code-review.prompt.md
+```
+
+**4. Commit Changes (Git Agent)**
+```
+@git-operations-agent
+Create a feature branch, stage the test files, and commit with proper conventional commit message
+
+#file:git-operations.prompt.md
+```
+
+### 🧪 Running Tests Locally
 
 ```bash
 # Run all tests
 uv run pytest
 
-# Run specific test file
-uv run pytest tests/test_login_page.py
+# Run specific test suite
+uv run pytest tests/sauce_ui/
+uv run pytest tests/pet_store_api/
 
-# Run with verbose output
-uv run pytest -v -s
+# Run with specific markers
+uv run pytest -m sanity
 
-# Run specific test
-uv run pytest tests/test_login_page.py::test_login_with_valid_credentials -v
+# Run specific test with Xray integration
+uv run pytest tests/sauce_ui/test_cart_page.py::test_cart_page_loads -v
 
+# Run tests and update Xray results (when configured)
+uv run pytest --xray-execution-id=DEV-123
 ```
 
-### MCP Server
+### 📊 Test Management with Xray
 
-The project includes an MCP server for test generation:
+The Xray MCP server enables seamless integration with Jira/Xray:
 
-```bash
-# Start the MCP server
-uv run python mcp_server/test_generation_server.py
+```python
+# Example: Using Xray in your workflow
+# 1. Create test execution
+# 2. Run tests
+# 3. Update test results via MCP
+
+# Copilot can help automate this:
+"""
+@workspace Create a test execution for sprint 23 and run all cart page tests,
+then update the test results in Xray
+"""
 ```
 
-### Using the MCP Server with GitHub Copilot
+---
 
-The MCP server exposes several tools that GitHub Copilot can use to generate tests intelligently using your project's guidelines and documentation.
+## 🔧 Advanced Configuration
 
+### Custom Pytest Markers
 
-#### **How to Use MCP with Copilot**
+Register custom markers in `pytest.ini`:
 
-**4. Ask Copilot to generate tests:**
+```ini
+[pytest]
+markers =
+    sanity: Quick smoke tests
+    regression: Full regression suite
+    test_case_key: Xray test case identifier
 ```
-@workspace Generate a test for the login page using the page object model guidelines
+
+### Xray Integration
+
+Tests can be linked to Xray test cases:
+
+```python
+@pytest.mark.test_case_key("DEV-51")
+def test_cart_page_loads(logged_in_user):
+    """Test cart page loads successfully."""
+    # Test execution will be linked to DEV-51 in Xray
 ```
 
-Copilot will:
-- Retrieve the login page feature description
-- Retrieve the page object model guidelines
-- Generate test code following the guidelines
-- Optionally write the test to `tests/test_<feature>.py`
+---
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. **Create Feature Branch**
+   ```bash
+   git checkout -b feature/new-test-suite
+   ```
+
+2. **Generate Tests with AI**
+   ```
+   @workspace Generate tests for checkout page following architecture guidelines
+   ```
+
+3. **Run Tests Locally**
+   ```bash
+   uv run pytest tests/sauce_ui/test_checkout_page.py -v
+   ```
+
+4. **Code Review with AI**
+   ```
+   Follow instructions in @code-review.prompt.md
+   Review the new checkout page tests
+   ```
+
+5. **Commit with Conventional Commits**
+   ```bash
+   git add tests/sauce_ui/test_checkout_page.py
+   git commit -m "test(checkout): add comprehensive checkout page tests
+
+   - Add 8 new test scenarios for checkout flow
+   - Cover happy path and error scenarios
+   - Link to Xray test cases DEV-100 through DEV-107"
+   ```
+
+6. **Push and Create PR**
+   ```bash
+   git push -u origin feature/new-test-suite
+   ```
+
+---
+
+## 📚 Documentation
+
+- **Architecture Guidelines**: See `contexts/architecture_context_docs/`
+- **Feature Specifications**: See `contexts/product_context_docs/`
+- **Custom Agents**: See `.github/agents/`
+- **Custom Prompts**: See `.github/prompts/`
+
+---
 
 
 ## 📝 License
@@ -306,11 +446,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Playwright](https://playwright.dev/) - Reliable browser automation
-- [LangChain](https://www.langchain.com/) - AI orchestration framework
-- [Ollama](https://ollama.ai/) - Local LLM inference
-- [Chroma](https://www.trychroma.com/) - Vector database
+- [Pytest](https://pytest.org/) - Testing framework
+- [Model Context Protocol](https://modelcontextprotocol.io/) - AI context integration
+- [GitHub Copilot](https://github.com/features/copilot) - AI-powered development
+- [Xray for Jira](https://www.getxray.app/) - Test management
 - [SauceDemo](https://www.saucedemo.com/) - Test application
-- [Chrome Dev Tools MCP] (https://github.com/mcp/chromedevtools/chrome-devtools-mcp) - MCP server for detecting locators
+- [Pet Store API](https://petstore.swagger.io/) - API testing endpoint
+- [Chrome DevTools MCP](https://github.com/mcp/chromedevtools/chrome-devtools-mcp) - Element selector discovery
 
 ---
 
@@ -322,11 +464,23 @@ Project Link: [https://github.com/afikmark/AIAutomationFramework](https://github
 
 ---
 
-## 🔮 Future Roadmap
+## 🔮 Roadmap
 
-- [ ] Support documentation fetching via Jira MCP
-- [ ] CI/CD pipeline templates
-- [ ] Reporting and Logging capabilities
+### Current Features
+- ✅ Page Object Model implementation
+- ✅ Custom MCP servers (Test Context & Xray)
+- ✅ GitHub Copilot agents and prompts
+- ✅ Xray/Jira integration via GraphQL
+- ✅ AI-powered test generation
+- ✅ Comprehensive test coverage (UI & API)
+- ✅ Pytest fixtures and markers
+
+### Planned Features
+- [ ] CI/CD pipeline templates (GitHub Actions)
+- [ ] Advanced reporting dashboard
+- [ ] Test data management utilities
+- [ ] Visual regression testing
+- [ ] Performance testing integration
+
 ---
 
-**Made with ❤️ and 🤖 AI**
