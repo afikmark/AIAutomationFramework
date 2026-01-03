@@ -136,3 +136,40 @@ class CartPage(BasePage):
             bool: True if cart has no items, False otherwise
         """
         return self.cart_items_count == 0
+
+    @property
+    def cart_badge_count(self) -> str:
+        """Get the cart badge count text.
+
+        Returns:
+            str: The cart badge count or empty string if no badge
+        """
+        try:
+            badge = self.page.locator(".shopping_cart_badge")
+            return badge.text_content() or ""
+        except Exception:
+            return ""
+
+    def is_checkout_button_visible(self) -> bool:
+        """Check if checkout button is visible.
+
+        Returns:
+            bool: True if checkout button is visible
+        """
+        return self.page.locator("#checkout").is_visible()
+
+    def is_continue_shopping_button_visible(self) -> bool:
+        """Check if continue shopping button is visible.
+
+        Returns:
+            bool: True if continue shopping button is visible
+        """
+        return self.page.locator("#continue-shopping").is_visible()
+
+    def click_cart_icon(self) -> None:
+        """Navigate to cart page by clicking the cart icon."""
+        self.page.locator(".shopping_cart_link").click()
+
+    def goto(self) -> None:
+        """Navigate to cart page directly."""
+        self.navigate_to_page()
