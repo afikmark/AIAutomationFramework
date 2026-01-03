@@ -1,6 +1,7 @@
 import pytest
 
 
+@pytest.mark.test_case_key("DEV-63")
 def test_inventory_page_loads_after_login(logged_in_user):
     """Test that inventory page loads successfully after login.
 
@@ -24,6 +25,7 @@ def test_inventory_page_loads_after_login(logged_in_user):
     ), "Expected page title to be 'Products'"
 
 
+@pytest.mark.test_case_key("DEV-64")
 def test_add_item_to_cart_updates_badge(logged_in_user):
     """Test that adding item to cart updates the cart badge count.
 
@@ -49,6 +51,7 @@ def test_add_item_to_cart_updates_badge(logged_in_user):
     ), "Cart badge should show 1 after adding item"
 
 
+@pytest.mark.test_case_key("DEV-66")
 def test_add_multiple_items_updates_badge_count(logged_in_user):
     """Test that adding multiple items updates the badge count correctly.
 
@@ -69,6 +72,7 @@ def test_add_multiple_items_updates_badge_count(logged_in_user):
     ), "Cart badge should show 3 after adding three items"
 
 
+@pytest.mark.test_case_key("DEV-73")
 def test_remove_item_from_cart_decrements_badge(logged_in_user):
     """Test that removing item from cart decrements the badge count.
 
@@ -94,6 +98,7 @@ def test_remove_item_from_cart_decrements_badge(logged_in_user):
     ), "Cart badge should show 1 after removing one item"
 
 
+@pytest.mark.test_case_key("DEV-70")
 def test_add_to_cart_button_changes_to_remove(logged_in_user):
     """Test that 'Add to cart' button changes to 'Remove' after adding item.
 
@@ -117,6 +122,7 @@ def test_add_to_cart_button_changes_to_remove(logged_in_user):
     ), "Product should be in cart after adding"
 
 
+@pytest.mark.test_case_key("DEV-69")
 @pytest.mark.parametrize(
     "sort_option,expected_first,expected_last",
     [
@@ -149,6 +155,7 @@ def test_sort_products_by_name(
     assert product_names[-1] == expected_last, f"Last product should be {expected_last}"
 
 
+@pytest.mark.test_case_key("DEV-72")
 def test_all_products_displayed(logged_in_user):
     """Test that all 6 products are displayed on inventory page.
 
@@ -164,6 +171,7 @@ def test_all_products_displayed(logged_in_user):
     assert len(product_names) == 6, "Inventory page should display 6 products"
 
 
+@pytest.mark.test_case_key("DEV-74")
 def test_cart_state_persists_after_sorting(logged_in_user):
     """Test that cart items persist when sorting products.
 
@@ -189,6 +197,7 @@ def test_cart_state_persists_after_sorting(logged_in_user):
     ), "Cart count should persist after sorting"
 
 
+@pytest.mark.test_case_key("DEV-71")
 def test_remove_all_items_from_cart(logged_in_user):
     """Test that removing all items from cart clears the badge.
 
@@ -214,6 +223,7 @@ def test_remove_all_items_from_cart(logged_in_user):
     ), "Cart badge should be empty after removing all items"
 
 
+@pytest.mark.test_case_key("DEV-75")
 @pytest.mark.parametrize(
     "sort_option,expected_first,expected_last",
     [
@@ -248,6 +258,7 @@ def test_sort_products_by_price(
     ), f"Last product should be {expected_last}, got {product_names[-1]}"
 
 
+@pytest.mark.test_case_key("DEV-76")
 def test_cart_badge_increments_correctly_with_individual_items(logged_in_user):
     """Test that adding multiple different items increments cart badge correctly.
 
@@ -269,6 +280,7 @@ def test_cart_badge_increments_correctly_with_individual_items(logged_in_user):
     assert logged_in_user.inventory_page.cart_badge_count == "3"
 
 
+@pytest.mark.test_case_key("DEV-77")
 def test_mixed_sorting_and_removal_maintains_correct_cart_count(logged_in_user):
     """Test that cart state is maintained correctly when adding items, sorting, and removing.
 

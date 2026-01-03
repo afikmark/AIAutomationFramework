@@ -2,6 +2,7 @@ import pytest
 from core.web.consts import Timeouts
 
 
+@pytest.mark.test_case_key("DEV-67")
 @pytest.mark.sanity
 @pytest.mark.parametrize(
     "username,password",
@@ -31,6 +32,7 @@ def test_login_with_valid_credentials(sauce_ui, username, password):
     ), f"Expected redirect to inventory after login with {username}"
 
 
+@pytest.mark.test_case_key("DEV-65")
 def test_login_with_performance_glitch_user(sauce_ui):
     """Test successful login with performance glitch user.
 
@@ -56,6 +58,7 @@ def test_login_with_performance_glitch_user(sauce_ui):
     ), "Expected redirect to inventory after login with performance glitch user"
 
 
+@pytest.mark.test_case_key("DEV-68")
 @pytest.mark.parametrize(
     "username,password,expected_error",
     [
