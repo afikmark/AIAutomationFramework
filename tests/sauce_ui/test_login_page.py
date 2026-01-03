@@ -48,7 +48,9 @@ def test_login_with_performance_glitch_user(sauce_ui):
     sauce_ui.login_page.navigate_to_page()
     sauce_ui.login_page.login("performance_glitch_user", "secret_sauce")
     # Allow extra time for performance glitch
-    sauce_ui.page.wait_for_url("**/inventory.html", timeout=Timeouts.PERFORMANCE_GLITCH_TIMEOUT)
+    sauce_ui.page.wait_for_url(
+        "**/inventory.html", timeout=Timeouts.PERFORMANCE_GLITCH_TIMEOUT
+    )
     assert sauce_ui.page.url.endswith(
         "/inventory.html"
     ), "Expected redirect to inventory after login with performance glitch user"

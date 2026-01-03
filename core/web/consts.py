@@ -20,5 +20,6 @@ class PagesURL:
 
 class Timeouts:
     """Timeout constants for various operations."""
+
     PERFORMANCE_GLITCH_TIMEOUT: int = 10000  # milliseconds
     DEFAULT_TIMEOUT: int = 30000  # milliseconds

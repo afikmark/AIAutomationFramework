@@ -83,7 +83,9 @@ def test_remove_item_from_cart_decrements_badge(logged_in_user):
     """
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
-    assert logged_in_user.inventory_page.cart_badge_count == "2", "Cart should have 2 items"
+    assert (
+        logged_in_user.inventory_page.cart_badge_count == "2"
+    ), "Cart should have 2 items"
 
     logged_in_user.inventory_page.remove_item_from_cart("Sauce Labs Backpack")
 
@@ -122,7 +124,9 @@ def test_add_to_cart_button_changes_to_remove(logged_in_user):
         ("za", "Test.allTheThings() T-Shirt (Red)", "Sauce Labs Backpack"),
     ],
 )
-def test_sort_products_by_name(logged_in_user, sort_option, expected_first, expected_last):
+def test_sort_products_by_name(
+    logged_in_user, sort_option, expected_first, expected_last
+):
     """Test sorting products alphabetically.
 
     Args:
@@ -217,7 +221,9 @@ def test_remove_all_items_from_cart(logged_in_user):
         ("hilo", "Sauce Labs Fleece Jacket", "Sauce Labs Onesie"),
     ],
 )
-def test_sort_products_by_price(logged_in_user, sort_option, expected_first, expected_last):
+def test_sort_products_by_price(
+    logged_in_user, sort_option, expected_first, expected_last
+):
     """Test sorting products by price with verification of first and last items.
 
     Args:

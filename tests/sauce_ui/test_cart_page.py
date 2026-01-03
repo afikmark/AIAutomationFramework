@@ -137,7 +137,9 @@ def test_remove_item_from_cart(logged_in_user):
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
 
-    assert logged_in_user.cart_page.cart_items_count == 1, "Should have 1 item after removal"
+    assert (
+        logged_in_user.cart_page.cart_items_count == 1
+    ), "Should have 1 item after removal"
     item_names = logged_in_user.cart_page.get_cart_item_names()
     assert "Sauce Labs Backpack" not in item_names, "Backpack should be removed"
 
@@ -453,7 +455,9 @@ def test_remove_single_item_from_cart(logged_in_user):
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
 
-    assert logged_in_user.cart_page.cart_items_count == 2, "Should have 2 items after removal"
+    assert (
+        logged_in_user.cart_page.cart_items_count == 2
+    ), "Should have 2 items after removal"
     assert logged_in_user.cart_page.cart_badge_count == "2", "Cart badge should show 2"
 
     remaining_items = logged_in_user.cart_page.get_cart_item_names()
@@ -487,13 +491,17 @@ def test_continue_shopping_navigation(logged_in_user):
 
     logged_in_user.cart_page.click_continue_shopping()
 
-    assert "/inventory.html" in logged_in_user.page.url, "Should navigate to inventory page"
+    assert (
+        "/inventory.html" in logged_in_user.page.url
+    ), "Should navigate to inventory page"
     assert (
         logged_in_user.cart_page.cart_badge_count == "2"
     ), "Cart badge should persist with 2 items"
 
-    logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 2, "Cart should still have 2 items"
+    logged_in_user.cart_page.click_cart_icon()
+    assert (
+        logged_in_user.cart_page.cart_items_count == 2
+    ), "Cart should still have 2 items"
 
     cart_items = logged_in_user.cart_page.get_cart_item_names()
     assert "Sauce Labs Backpack" in cart_items, "Original items should be preserved"
@@ -552,7 +560,9 @@ def test_empty_cart_checkout_behavior(logged_in_user):
     logged_in_user.inventory_page.click_cart_icon()
 
     assert logged_in_user.cart_page.is_empty(), "Cart should be empty"
-    assert logged_in_user.cart_page.cart_badge_count == "", "Cart badge should not display"
+    assert (
+        logged_in_user.cart_page.cart_badge_count == ""
+    ), "Cart badge should not display"
     assert (
         logged_in_user.cart_page.is_continue_shopping_button_visible()
     ), "Continue Shopping should be visible"
@@ -621,16 +631,18 @@ def test_hamburger_menu_navigation_from_cart(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.click_cart_icon()
 
-    logged_in_user.cart_page.hamburger_menu.open_menu()
-    logged_in_user.cart_page.hamburger_menu.click_all_items()
+    logged_in_user.hamburger_menu.open_menu()
+    logged_in_user.hamburger_menu.click_all_items()
 
-    assert "/inventory.html" in logged_in_user.page.url, "Should navigate to inventory page"
+    assert (
+        "/inventory.html" in logged_in_user.page.url
+    ), "Should navigate to inventory page"
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    logged_in_user.cart_page.hamburger_menu.open_menu()
-    logged_in_user.cart_page.hamburger_menu.click_reset_app_state()
-    logged_in_user.cart_page.hamburger_menu.close_menu()
+    logged_in_user.hamburger_menu.open_menu()
+    logged_in_user.hamburger_menu.click_reset_app_state()
+    logged_in_user.hamburger_menu.close_menu()
 
     logged_in_user.page.reload()
     logged_in_user.inventory_page.click_cart_icon()
@@ -673,7 +685,9 @@ def test_browser_back_button_handling(logged_in_user):
     logged_in_user.page.go_back()
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
-    assert logged_in_user.cart_page.cart_items_count == 1, "Should have 1 item after removal"
+    assert (
+        logged_in_user.cart_page.cart_items_count == 1
+    ), "Should have 1 item after removal"
 
     logged_in_user.cart_page.click_continue_shopping()
     logged_in_user.page.go_back()
