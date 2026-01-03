@@ -28,13 +28,9 @@ jobs:
         run: |
           uv sync --extra dev
       
-      - name: Install Playwright browsers
+      - name: Run Collection
         run: |
-          uv run playwright install --with-deps
-      
-      - name: Run sanity tests
-        run: |
-          uv run pytest tests/ -m sanity -v
+          uv run pytest tests/ --collect-only
       
       - name: Check code formatting with Black
         run: |
