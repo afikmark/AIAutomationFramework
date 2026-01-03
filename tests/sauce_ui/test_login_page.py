@@ -3,7 +3,6 @@ from core.web.consts import Timeouts
 
 
 @pytest.mark.test_case_key("DEV-67")
-@pytest.mark.sanity
 @pytest.mark.parametrize(
     "username,password",
     [

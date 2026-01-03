@@ -42,4 +42,4 @@ jobs:
       
       - name: Run type checking with mypy
         run: |
-          uv run mypy core/ mcp_server/ rag_engine/ tests/
+          uv run mypy .
