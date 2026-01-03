@@ -20,7 +20,7 @@ class CartPage(BasePage):
     @property
     def hamburger_menu(self) -> HamburgerMenu:
         """Get the hamburger menu component.
-        
+
         Returns:
             HamburgerMenu: The hamburger menu component instance
         """
