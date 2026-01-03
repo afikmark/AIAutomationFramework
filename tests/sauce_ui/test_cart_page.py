@@ -621,16 +621,16 @@ def test_hamburger_menu_navigation_from_cart(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.click_cart_icon()
 
-    logged_in_user.hamburger_menu.open_menu()
-    logged_in_user.hamburger_menu.click_all_items()
+    logged_in_user.cart_page.hamburger_menu.open_menu()
+    logged_in_user.cart_page.hamburger_menu.click_all_items()
 
     assert "/inventory.html" in logged_in_user.page.url, "Should navigate to inventory page"
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    logged_in_user.hamburger_menu.open_menu()
-    logged_in_user.hamburger_menu.click_reset_app_state()
-    logged_in_user.hamburger_menu.close_menu()
+    logged_in_user.cart_page.hamburger_menu.open_menu()
+    logged_in_user.cart_page.hamburger_menu.click_reset_app_state()
+    logged_in_user.cart_page.hamburger_menu.close_menu()
 
     logged_in_user.page.reload()
     logged_in_user.inventory_page.click_cart_icon()
