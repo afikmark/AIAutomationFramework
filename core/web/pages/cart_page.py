@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 from core.web.base_page import BasePage
 from core.web.consts import PagesURL
+from core.web.components.hamburger_menu import HamburgerMenu
 
 
 class CartPage(BasePage):
@@ -14,6 +15,18 @@ class CartPage(BasePage):
         """Initialize the Cart Page."""
         super().__init__(page, base_url)
         self.url = PagesURL.Cart
+        self._hamburger_menu: HamburgerMenu | None = None
+
+    @property
+    def hamburger_menu(self) -> HamburgerMenu:
+        """Get the hamburger menu component.
+        
+        Returns:
+            HamburgerMenu: The hamburger menu component instance
+        """
+        if self._hamburger_menu is None:
+            self._hamburger_menu = HamburgerMenu(self.page)
+        return self._hamburger_menu
 
     @property
     def page_title(self) -> str:
