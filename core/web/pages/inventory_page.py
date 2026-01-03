@@ -92,3 +92,7 @@ class InventoryPage(BasePage):
         """
         button_id = f"remove-{product_name.lower().replace(' ', '-')}"
         return self.page.locator(f"#{button_id}").is_visible()
+
+    def click_cart_icon(self) -> None:
+        """Navigate to cart page by clicking the cart icon."""
+        self.page.locator(".shopping_cart_link").click()

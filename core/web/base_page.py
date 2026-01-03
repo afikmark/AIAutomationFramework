@@ -28,3 +28,7 @@ class BasePage:
             path (str): The path to navigate to.
         """
         self.page.goto(f"{self.base_url}{self.url}")
+
+    def goto(self) -> None:
+        """Navigate to the page's URL (alias for navigate_to_page)."""
+        self.navigate_to_page()

@@ -71,3 +71,20 @@ def pet_store_controller() -> PetStoreController:
     """
 
     return PetStoreController()
+
+
+@pytest.fixture(scope="function")
+def logged_in_user(sauce_ui: SauceDemo) -> SauceDemo:
+    """
+    Fixture that provides a SauceDemo instance with user already logged in.
+    This fixture automatically logs in as standard_user before the test runs.
+
+    Args:
+        sauce_ui: SauceDemo fixture instance
+
+    Returns:
+        SauceDemo: SauceDemo instance with user logged in
+    """
+    sauce_ui.login_page.navigate_to_page()
+    sauce_ui.login_page.login("standard_user", "secret_sauce")
+    return sauce_ui
