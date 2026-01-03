@@ -492,7 +492,7 @@ def test_continue_shopping_navigation(logged_in_user):
         logged_in_user.cart_page.cart_badge_count == "2"
     ), "Cart badge should persist with 2 items"
 
-    logged_in_user.cart_page.click_cart_icon()
+    logged_in_user.inventory_page.click_cart_icon()
     assert logged_in_user.cart_page.cart_items_count == 2, "Cart should still have 2 items"
 
     cart_items = logged_in_user.cart_page.get_cart_item_names()
