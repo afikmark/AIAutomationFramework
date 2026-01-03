@@ -15,8 +15,9 @@ Generate concise, correct pytest-playwright tests for this repository following 
 - You will validate that the generated tests adhere to the repository's coding standards and guidelines.
 
 ## commands:
-- ```pytest``: to run the tests
-- ``` black . ```: to format the code
+- ```pytest```: to run the tests
+- ```black .```: to format the code
+- ```mypy .```: to run type checking
 
 handoffs:
   - label: Request Code Review
