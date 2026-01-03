@@ -116,7 +116,7 @@ def xray_update_test_type(issue_id: str, test_type: str) -> str:
 
     Args:
         issue_id: Test issue ID (e.g., "10086")
-        test_type: Test type name (e.g., "Manual", "Cucumber", "Generic", "Automated[Generic]")
+        test_type: Test type name (e.g., "Manual", "Cucumber", "Generic", "Automated")
 
     Returns:
         JSON string with updated test details

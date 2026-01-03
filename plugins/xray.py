@@ -33,7 +33,7 @@ class XrayClient:
 
         self.graphql_url = "https://xray.cloud.getxray.app/api/v2/graphql"
         self.auth_url = "https://xray.cloud.getxray.app/api/v2/authenticate"
-        self.token = None
+        self.token: Optional[str] = None
         self._authenticate()
 
     def _authenticate(self) -> None:
@@ -45,9 +45,10 @@ class XrayClient:
                 headers={"Content-Type": "application/json"},
             )
             response.raise_for_status()
+            json_response = response.json()
             self.token = (
-                response.json()
-                if isinstance(response.json(), str)
+                json_response
+                if isinstance(json_response, str)
                 else response.text.strip('"')
             )
         except requests.exceptions.RequestException as e:
@@ -86,7 +87,8 @@ class XrayClient:
                     f"GraphQL errors: {json.dumps(result['errors'], indent=2)}"
                 )
 
-            return result.get("data", {})
+            data: Dict[Any, Any] = result.get("data", {})
+            return data
         except requests.exceptions.RequestException as e:
             raise Exception(f"Failed to execute query: {str(e)}")
 
@@ -161,7 +163,8 @@ class XrayClient:
         result = self._execute_query(query, {"jql": jql, "limit": 1})
 
         if result.get("getTests", {}).get("results"):
-            return result["getTests"]["results"][0]
+            test_result: Dict[Any, Any] = result["getTests"]["results"][0]
+            return test_result
         return {}
 
     def get_tests_by_label(self, label: str, limit: int = 100) -> List[Dict]:
@@ -192,7 +195,8 @@ class XrayClient:
         """
         jql = f'labels = "{label}" AND type = Test'
         result = self._execute_query(query, {"jql": jql, "limit": limit})
-        return result.get("getTests", {}).get("results", [])
+        tests: List[Dict[Any, Any]] = result.get("getTests", {}).get("results", [])
+        return tests
 
     # Test Plan Operations
 
@@ -258,7 +262,8 @@ class XrayClient:
         result = self._execute_query(query, {"jql": jql, "limit": 1})
 
         if result.get("getTestPlans", {}).get("results"):
-            return result["getTestPlans"]["results"][0]
+            plan_result: Dict[Any, Any] = result["getTestPlans"]["results"][0]
+            return plan_result
         return {}
 
     def add_tests_to_test_plan(
@@ -504,7 +509,8 @@ class XrayClient:
         }
         """
         result = self._execute_query(query, {"jql": jql, "limit": limit})
-        return result.get("getTests", {}).get("results", [])
+        tests: List[Dict[Any, Any]] = result.get("getTests", {}).get("results", [])
+        return tests
 
     def search_test_plans(self, jql: str, limit: int = 100) -> List[Dict]:
         """
@@ -529,4 +535,5 @@ class XrayClient:
         }
         """
         result = self._execute_query(query, {"jql": jql, "limit": limit})
-        return result.get("getTestPlans", {}).get("results", [])
+        plans: List[Dict[Any, Any]] = result.get("getTestPlans", {}).get("results", [])
+        return plans

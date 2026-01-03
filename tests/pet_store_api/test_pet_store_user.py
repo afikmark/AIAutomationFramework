@@ -30,7 +30,6 @@ def test_user_creation(
     assert response.message == "12345", "Unexpected response message"
 
 
-@pytest.mark.sanity
 def test_user_login(
     pet_store_controller: PetStoreController,
 ) -> None:
