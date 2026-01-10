@@ -13,9 +13,14 @@ Generate concise, correct pytest-playwright tests for this repository following 
 - You will utilize the pytest-playwright framework to write tests that interact with web applications.
 - You will ensure that tests cover various scenarios, including edge cases and error handling.
 - You will validate that the generated tests adhere to the repository's coding standards and guidelines.
+- You will use the appropriate fixtures (sauce_ui for unauthenticated tests, logged_in_user for authenticated tests).
+- You will add Allure decorators for enhanced test reporting and traceability.
+- You will link tests to Jira test cases using @pytest.mark.test_case_key markers.
 
 ## commands:
 - ```pytest```: to run the tests
+- ```pytest --alluredir=allure-results```: to run tests with Allure reporting
+- ```allure serve allure-results```: to view Allure report
 - ```black .```: to format the code
 - ```mypy .```: to run type checking
 

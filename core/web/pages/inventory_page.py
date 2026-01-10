@@ -8,7 +8,7 @@ class InventoryPage(BasePage):
 
     def __init__(self, page: Page, base_url: str):
         super().__init__(page, base_url)
-        self.path = PagesURL.Inventory
+        self.url = PagesURL.Inventory
 
     @property
     def page_title(self) -> str:

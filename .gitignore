@@ -37,3 +37,6 @@ ENV/
 # Temporary files
 *.tmp/
 /tmp/*
+playwright/.auth
+allure-results/
+state.json

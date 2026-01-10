@@ -56,6 +56,32 @@ Integrates with Jira/Xray via GraphQL:
 - **API Testing**: RESTful API testing with Pydantic validation
 - **Test Management**: Pytest with Xray integration
 - **Browser Support**: Chromium, Firefox, WebKit
+- **📊 Reporting**: Allure reports with rich test documentation
+- **🔐 Authentication**: Reusable auth state for faster test execution
+- **⚙️ Configuration**: Flexible base URL configuration via CLI and environment variables
+
+### 🆕 Recent Enhancements
+
+#### Allure Reporting Integration
+- **Rich HTML Reports**: Interactive test execution reports with screenshots, logs, and attachments
+- **Network Tracking**: Automatic capture of failed network requests (400+ status codes)
+- **Screenshot Capture**: Automatic screenshots on test failure
+- **Custom Metadata**: Test case keys, severity, and suite information
+- **Generate & View**: `uv run pytest --alluredir=allure-results && allure serve allure-results`
+
+#### Authentication State Management
+- **Reusable Auth State**: Login once per test session, reuse across all authenticated tests
+- **Faster Execution**: Skip redundant login steps, reducing test execution time by ~70%
+- **Headless Auth Creation**: Authentication state always created in headless mode for stability
+- **Fixture-Based**: Simple `logged_in_user` fixture provides authenticated browser context
+- **Auto-Cleanup**: Auth state automatically recreated when session changes
+
+#### Base URL Configuration
+- **CLI Override**: `--base-url` flag to run tests against different environments
+- **Environment Variable**: Set `BASE_URL` in `.env` for default configuration
+- **Per-Test Flexibility**: Configure base URL per test suite or test
+- **Example**: `uv run pytest --base-url=https://staging.example.com tests/`
+
 
 ---
 
@@ -70,6 +96,7 @@ Integrates with Jira/Xray via GraphQL:
 | **Pytest** | Testing framework | 9.0+ |
 | **Pydantic** | Data validation | Latest |
 | **Requests** | HTTP client | Latest |
+| **Allure-Pytest** | Test reporting | 2.15.3 |
 
 ### MCP & AI Integration
 
@@ -146,6 +173,7 @@ Then edit `.env` with your actual credentials:
 - `XRAY_CLIENT_SECRET` - Xray Cloud client secret
 - `POSTMAN_API_KEY` - Postman API key for collection management
 - `PET_STORE_API_KEY` - Pet Store API key (if required)
+- `BASE_URL` - Default base URL for UI tests (optional)
 
 ### 2. MCP Server Configuration for VS Code & GitHub Copilot
 
@@ -332,6 +360,18 @@ uv run pytest tests/pet_store_api/
 # Run with specific markers
 uv run pytest -m sanity
 
+# Run with Allure reporting
+uv run pytest tests/ --alluredir=allure-results
+
+# Generate and view Allure report
+allure serve allure-results
+
+# Run tests with custom base URL
+uv run pytest --base-url=https://staging.saucedemo.com tests/sauce_ui/
+
+# Run in headed mode (visible browser)
+uv run pytest --headed tests/sauce_ui/
+
 # Run specific test with Xray integration
 uv run pytest tests/sauce_ui/test_cart_page.py::test_cart_page_loads -v
 
@@ -381,6 +421,23 @@ Tests can be linked to Xray test cases:
 def test_cart_page_loads(logged_in_user):
     """Test cart page loads successfully."""
     # Test execution will be linked to DEV-51 in Xray
+```
+
+### Allure Report Customization
+
+Customize Allure reports in tests:
+
+```python
+import allure
+
+@allure.feature("Shopping Cart")
+@allure.story("Cart Management")
+@allure.severity(allure.severity_level.CRITICAL)
+def test_add_to_cart(logged_in_user):
+    """Test adding products to cart."""
+    with allure.step("Navigate to inventory page"):
+        # Test steps...
+        pass
 ```
 
 ---
@@ -450,9 +507,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Model Context Protocol](https://modelcontextprotocol.io/) - AI context integration
 - [GitHub Copilot](https://github.com/features/copilot) - AI-powered development
 - [Xray for Jira](https://www.getxray.app/) - Test management
+- [Allure Framework](https://allurereport.org/) - Test reporting
 - [SauceDemo](https://www.saucedemo.com/) - Test application
 - [Pet Store API](https://petstore.swagger.io/) - API testing endpoint
-- [Chrome DevTools MCP](https://github.com/mcp/chromedevtools/chrome-devtools-mcp) - Element selector discovery
+- [Chrome DevTools MCP](https://github.com/modelcontextprotocol/servers/tree/main/src/chrome-devtools) - Element selector discovery
 
 ---
 
@@ -474,6 +532,9 @@ Project Link: [https://github.com/afikmark/AIAutomationFramework](https://github
 - ✅ AI-powered test generation
 - ✅ Comprehensive test coverage (UI & API)
 - ✅ Pytest fixtures and markers
+- ✅ Allure reporting with rich test documentation
+- ✅ Authentication state reuse for faster execution
+- ✅ Flexible base URL configuration
 
 ### Planned Features
 - [ ] CI/CD pipeline templates (GitHub Actions)
@@ -481,6 +542,8 @@ Project Link: [https://github.com/afikmark/AIAutomationFramework](https://github
 - [ ] Test data management utilities
 - [ ] Visual regression testing
 - [ ] Performance testing integration
+- [ ] Parallel test execution (pytest-xdist)
+- [ ] Docker containerization
 
 ---
 

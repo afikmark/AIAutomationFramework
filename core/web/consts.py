@@ -10,7 +10,7 @@ class ComponentNames:
 
 
 class PagesURL:
-    Login: str = "/index.html"
+    Login: str = "/"
     Inventory: str = "/inventory.html"
     Cart: str = "/cart.html"
     CheckoutStepOne: str = "/checkout-step-one.html"

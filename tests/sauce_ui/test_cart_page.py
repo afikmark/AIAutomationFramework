@@ -1,4 +1,7 @@
 import pytest
+from plugins.reporter import reporter
+
+TEST_SUITE_NAME = "SauceDemo Cart Page Tests"
 
 
 @pytest.mark.test_case_key("DEV-51")
@@ -20,12 +23,9 @@ def test_cart_page_loads_after_adding_items(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
 
-    # Navigate to cart by clicking the cart button
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert (
-        logged_in_user.cart_page.page_title == "Your Cart"
-    ), "Expected cart page title to be 'Your Cart'"
+    reporter.assert_that(logged_in_user.cart_page.page_title).is_equal_to("Your Cart")
 
 
 @pytest.mark.test_case_key("DEV-54")
@@ -49,12 +49,12 @@ def test_cart_displays_added_items(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.cart_items_count == 3, "Expected 3 items in cart"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
     item_names = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" in item_names, "Backpack should be in cart"
-    assert "Sauce Labs Bike Light" in item_names, "Bike Light should be in cart"
-    assert "Sauce Labs Bolt T-Shirt" in item_names, "Bolt T-Shirt should be in cart"
+    reporter.assert_that(item_names).contains("Sauce Labs Backpack")
+    reporter.assert_that(item_names).contains("Sauce Labs Bike Light")
+    reporter.assert_that(item_names).contains("Sauce Labs Bolt T-Shirt")
 
 
 @pytest.mark.test_case_key("DEV-50")

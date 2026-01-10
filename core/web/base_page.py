@@ -6,9 +6,9 @@ class BasePage:
 
     def __init__(self, page: Page, base_url: str):
         """Initialize the Base Page."""
-        self._page = page
-        self.base_url = base_url
-        self.url = ""
+        self._page: Page = page
+        self.base_url: str = base_url
+        self.url: str = ""
 
     @property
     def page(self) -> Page:
