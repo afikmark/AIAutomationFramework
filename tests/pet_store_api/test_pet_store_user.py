@@ -1,6 +1,7 @@
 from core.controllers.pet_store_controller import PetStoreController
 from core.schemas.pet_store_login import PetStoreLoginRequest
 from core.schemas.pet_store_user_creation import PetStoreUserCreateRequest
+from plugins.reporter import reporter
 import pytest
 
 
@@ -25,9 +26,9 @@ def test_user_creation(
     )
 
     response = pet_store_controller.create_user(user_data)
-    assert response.code == 200, "User creation failed"
-    assert response.type == "unknown", "Unexpected response type"
-    assert response.message == "12345", "Unexpected response message"
+    reporter.assert_that(response.code).is_equal_to(200)
+    reporter.assert_that(response.type).is_equal_to("unknown")
+    reporter.assert_that(response.message).is_equal_to("12345")
 
 
 def test_user_login(
@@ -45,6 +46,6 @@ def test_user_login(
     )
 
     response = pet_store_controller.login(login_data)
-    assert response.code == 200, "Login failed"
-    assert response.type == "unknown", "Unexpected response type"
-    assert "logged in user session:" in response.message, "Unexpected response message"
+    reporter.assert_that(response.code).is_equal_to(200)
+    reporter.assert_that(response.type).is_equal_to("unknown")
+    reporter.assert_that(response.message).contains("logged in user session:")

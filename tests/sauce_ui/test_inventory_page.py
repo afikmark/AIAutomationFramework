@@ -21,7 +21,9 @@ def test_inventory_page_loads_after_login(logged_in_user):
         4) Verify page title
     """
     reporter.assert_that(logged_in_user.page.url).ends_with("/inventory.html")
-    reporter.assert_that(logged_in_user.inventory_page.page_title).is_equal_to("Products")
+    reporter.assert_that(logged_in_user.inventory_page.page_title).is_equal_to(
+        "Products"
+    )
 
 
 @pytest.mark.test_case_key("DEV-64")
@@ -39,11 +41,15 @@ def test_add_item_to_cart_updates_badge(logged_in_user):
         3) Add item to cart
         4) Verify cart badge shows count of 1
     """
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("0")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "0"
+    )
 
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("1")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "1"
+    )
 
 
 @pytest.mark.test_case_key("DEV-66")
@@ -62,7 +68,9 @@ def test_add_multiple_items_updates_badge_count(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bolt T-Shirt")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("3")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "3"
+    )
 
 
 @pytest.mark.test_case_key("DEV-73")
@@ -80,11 +88,15 @@ def test_remove_item_from_cart_decrements_badge(logged_in_user):
     """
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("2")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "2"
+    )
 
     logged_in_user.inventory_page.remove_item_from_cart("Sauce Labs Backpack")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("1")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "1"
+    )
 
 
 @pytest.mark.test_case_key("DEV-70")
@@ -100,15 +112,15 @@ def test_add_to_cart_button_changes_to_remove(logged_in_user):
         3) Add item to cart
         4) Verify item is in cart (button shows 'Remove')
     """
-    reporter.assert_that(logged_in_user.inventory_page.is_product_in_cart(
-        "Sauce Labs Backpack"
-    )).is_false()
+    reporter.assert_that(
+        logged_in_user.inventory_page.is_product_in_cart("Sauce Labs Backpack")
+    ).is_false()
 
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
 
-    reporter.assert_that(logged_in_user.inventory_page.is_product_in_cart(
-        "Sauce Labs Backpack"
-    )).is_true()
+    reporter.assert_that(
+        logged_in_user.inventory_page.is_product_in_cart("Sauce Labs Backpack")
+    ).is_true()
 
 
 @pytest.mark.test_case_key("DEV-69")
@@ -179,7 +191,9 @@ def test_cart_state_persists_after_sorting(logged_in_user):
 
     logged_in_user.inventory_page.sort_products("hilo")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(initial_count)
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        initial_count
+    )
 
 
 @pytest.mark.test_case_key("DEV-71")
@@ -203,7 +217,9 @@ def test_remove_all_items_from_cart(logged_in_user):
     logged_in_user.inventory_page.remove_item_from_cart("Sauce Labs Bike Light")
     logged_in_user.inventory_page.remove_item_from_cart("Sauce Labs Bolt T-Shirt")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("0")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "0"
+    )
 
 
 @pytest.mark.test_case_key("DEV-75")
@@ -250,13 +266,19 @@ def test_cart_badge_increments_correctly_with_individual_items(logged_in_user):
         3) Verify cart badge increments after each addition
     """
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("1")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "1"
+    )
 
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("2")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "2"
+    )
 
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bolt T-Shirt")
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("3")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "3"
+    )
 
 
 @pytest.mark.test_case_key("DEV-77")
@@ -279,11 +301,15 @@ def test_mixed_sorting_and_removal_maintains_correct_cart_count(logged_in_user):
 
     logged_in_user.inventory_page.sort_products("lohi")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("3")
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "3"
+    )
 
     logged_in_user.inventory_page.remove_item_from_cart("Sauce Labs Backpack")
 
-    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to("2")
-    reporter.assert_that(logged_in_user.inventory_page.is_product_in_cart(
-        "Sauce Labs Backpack"
-    )).is_false()
+    reporter.assert_that(logged_in_user.inventory_page.cart_badge_count).is_equal_to(
+        "2"
+    )
+    reporter.assert_that(
+        logged_in_user.inventory_page.is_product_in_cart("Sauce Labs Backpack")
+    ).is_false()
