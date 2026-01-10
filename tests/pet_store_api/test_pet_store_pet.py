@@ -30,7 +30,7 @@ def test_add_new_pet(
     reporter.assert_that(response.id).is_equal_to(12345)
     reporter.assert_that(response.name).is_equal_to("Buddy")
     reporter.assert_that(response.status).is_equal_to("available")
-    reporter.assert_that(response.category).is_not_none()
+    assert response.category is not None
     reporter.assert_that(response.category.name).is_equal_to("Dogs")
 
 
@@ -60,5 +60,5 @@ def test_get_pet_by_id(
     reporter.assert_that(get_response.id).is_equal_to(67890)
     reporter.assert_that(get_response.name).is_equal_to("Whiskers")
     reporter.assert_that(get_response.status).is_equal_to("available")
-    reporter.assert_that(get_response.category).is_not_none()
+    assert get_response.category is not None
     reporter.assert_that(get_response.category.name).is_equal_to("Cats")
