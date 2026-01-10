@@ -12,7 +12,6 @@ class LoginPage(BasePage):
     def __init__(self, page: Page, base_url: str):
         """Initialize the Login Page."""
         super().__init__(page, base_url)
-        # Use path-only URL to let BasePage compose with base_url consistently
         self.url = PagesURL.Login
 
     @property

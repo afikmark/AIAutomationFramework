@@ -1,7 +1,12 @@
 import pytest
 from core.web.consts import Timeouts
+from plugins.reporter import reporter
+from core.web.pages.sauce_demo import SauceDemo
+
+TEST_SUITE_NAME: str = "SauceDemo Login Page Tests"
 
 
+@pytest.mark.sanity
 @pytest.mark.test_case_key("DEV-67")
 @pytest.mark.parametrize(
     "username,password",
@@ -10,7 +15,7 @@ from core.web.consts import Timeouts
         ("problem_user", "secret_sauce"),
     ],
 )
-def test_login_with_valid_credentials(sauce_ui, username, password):
+def test_login_with_valid_credentials(sauce_ui: SauceDemo, username, password):
     """Test successful login with valid credentials.
 
     Verifies that user can log in and is redirected to inventory page.
@@ -23,16 +28,16 @@ def test_login_with_valid_credentials(sauce_ui, username, password):
         2) Enter valid credentials
         3) Click login
         4) Verify redirect to inventory
+
     """
+
     sauce_ui.login_page.navigate_to_page()
     sauce_ui.login_page.login(username, password)
-    assert sauce_ui.page.url.endswith(
-        "/inventory.html"
-    ), f"Expected redirect to inventory after login with {username}"
+    reporter.assert_that(sauce_ui.page.url).ends_with("/inventory.html")
 
 
 @pytest.mark.test_case_key("DEV-65")
-def test_login_with_performance_glitch_user(sauce_ui):
+def test_login_with_performance_glitch_user(sauce_ui: SauceDemo):
     """Test successful login with performance glitch user.
 
     Verifies that user can log in despite performance delays.
@@ -48,13 +53,10 @@ def test_login_with_performance_glitch_user(sauce_ui):
     """
     sauce_ui.login_page.navigate_to_page()
     sauce_ui.login_page.login("performance_glitch_user", "secret_sauce")
-    # Allow extra time for performance glitch
     sauce_ui.page.wait_for_url(
         "**/inventory.html", timeout=Timeouts.PERFORMANCE_GLITCH_TIMEOUT
     )
-    assert sauce_ui.page.url.endswith(
-        "/inventory.html"
-    ), "Expected redirect to inventory after login with performance glitch user"
+    reporter.assert_that(sauce_ui.page.url).ends_with("/inventory.html")
 
 
 @pytest.mark.test_case_key("DEV-68")
@@ -76,7 +78,9 @@ def test_login_with_performance_glitch_user(sauce_ui):
         ),
     ],
 )
-def test_login_with_invalid_credentials(sauce_ui, username, password, expected_error):
+def test_login_with_invalid_credentials(
+    sauce_ui: SauceDemo, username, password, expected_error
+):
     """Test failed login with invalid credentials.
 
     Verifies that login fails and appropriate error message is shown.
@@ -94,9 +98,5 @@ def test_login_with_invalid_credentials(sauce_ui, username, password, expected_e
     sauce_ui.login_page.navigate_to_page()
     initial_url = sauce_ui.page.url
     sauce_ui.login_page.login(username, password)
-    assert (
-        expected_error in sauce_ui.login_page.error_message
-    ), f"Expected error message containing '{expected_error}' for login with {username}:{password}, got: '{sauce_ui.login_page.error_message}'"
-    assert (
-        sauce_ui.page.url == initial_url
-    ), f"Expected no redirect after failed login with {username}"
+    reporter.assert_that(sauce_ui.login_page.error_message).contains(expected_error)
+    reporter.assert_that(sauce_ui.page.url).is_equal_to(initial_url)

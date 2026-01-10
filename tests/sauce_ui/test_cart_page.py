@@ -1,4 +1,7 @@
 import pytest
+from plugins.reporter import reporter
+
+TEST_SUITE_NAME = "SauceDemo Cart Page Tests"
 
 
 @pytest.mark.test_case_key("DEV-51")
@@ -20,12 +23,9 @@ def test_cart_page_loads_after_adding_items(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
 
-    # Navigate to cart by clicking the cart button
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert (
-        logged_in_user.cart_page.page_title == "Your Cart"
-    ), "Expected cart page title to be 'Your Cart'"
+    reporter.assert_that(logged_in_user.cart_page.page_title).is_equal_to("Your Cart")
 
 
 @pytest.mark.test_case_key("DEV-54")
@@ -49,12 +49,12 @@ def test_cart_displays_added_items(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.cart_items_count == 3, "Expected 3 items in cart"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
     item_names = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" in item_names, "Backpack should be in cart"
-    assert "Sauce Labs Bike Light" in item_names, "Bike Light should be in cart"
-    assert "Sauce Labs Bolt T-Shirt" in item_names, "Bolt T-Shirt should be in cart"
+    reporter.assert_that(item_names).contains("Sauce Labs Backpack")
+    reporter.assert_that(item_names).contains("Sauce Labs Bike Light")
+    reporter.assert_that(item_names).contains("Sauce Labs Bolt T-Shirt")
 
 
 @pytest.mark.test_case_key("DEV-50")
@@ -78,9 +78,9 @@ def test_cart_displays_correct_prices(logged_in_user):
     logged_in_user.inventory_page.click_cart_icon()
 
     prices = logged_in_user.cart_page.get_cart_item_prices()
-    assert len(prices) == 2, "Should have 2 prices"
-    assert prices[0] == 29.99, "Backpack price should be $29.99"
-    assert prices[1] == 9.99, "Bike Light price should be $9.99"
+    reporter.assert_that(len(prices)).is_equal_to(2)
+    reporter.assert_that(prices[0]).is_equal_to(29.99)
+    reporter.assert_that(prices[1]).is_equal_to(9.99)
 
 
 @pytest.mark.test_case_key("DEV-52")
@@ -105,11 +105,8 @@ def test_cart_calculate_total(logged_in_user):
     logged_in_user.inventory_page.click_cart_icon()
 
     total = logged_in_user.cart_page.calculate_total()
-    # Backpack: $29.99, Bike Light: $9.99, Bolt T-Shirt: $15.99
     expected_total = 29.99 + 9.99 + 15.99
-    assert (
-        abs(total - expected_total) < 0.01
-    ), f"Expected total ~${expected_total}, got ${total}"
+    reporter.assert_that(abs(total - expected_total)).is_less_than(0.01)
 
 
 @pytest.mark.test_case_key("DEV-49")
@@ -133,15 +130,13 @@ def test_remove_item_from_cart(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.cart_items_count == 2, "Should start with 2 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
 
-    assert (
-        logged_in_user.cart_page.cart_items_count == 1
-    ), "Should have 1 item after removal"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(1)
     item_names = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" not in item_names, "Backpack should be removed"
+    reporter.assert_that(item_names).does_not_contain("Sauce Labs Backpack")
 
 
 @pytest.mark.test_case_key("DEV-48")
@@ -159,7 +154,7 @@ def test_empty_cart_shows_empty_state(logged_in_user):
     """
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.is_empty(), "Cart should be empty initially"
+    reporter.assert_that(logged_in_user.cart_page.is_empty()).is_true()
 
 
 @pytest.mark.test_case_key("DEV-53")
@@ -184,9 +179,7 @@ def test_cart_continue_shopping_navigates_to_inventory(logged_in_user):
 
     logged_in_user.cart_page.click_continue_shopping()
 
-    assert logged_in_user.page.url.endswith(
-        "/inventory.html"
-    ), "Should navigate back to inventory page"
+    reporter.assert_that(logged_in_user.page.url).ends_with("/inventory.html")
 
 
 @pytest.mark.test_case_key("DEV-55")
@@ -211,9 +204,7 @@ def test_cart_checkout_navigates_to_checkout_step_one(logged_in_user):
 
     logged_in_user.cart_page.click_checkout()
 
-    assert logged_in_user.page.url.endswith(
-        "/checkout-step-one.html"
-    ), "Should navigate to checkout step one"
+    reporter.assert_that(logged_in_user.page.url).ends_with("/checkout-step-one.html")
 
 
 @pytest.mark.test_case_key("DEV-57")
@@ -242,9 +233,7 @@ def test_remove_all_items_from_cart_clears_cart(logged_in_user):
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Bike Light")
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Bolt T-Shirt")
 
-    assert (
-        logged_in_user.cart_page.is_empty()
-    ), "Cart should be empty after removing all items"
+    reporter.assert_that(logged_in_user.cart_page.is_empty()).is_true()
 
 
 @pytest.mark.test_case_key("DEV-56")
@@ -262,7 +251,6 @@ def test_cart_item_count_matches_added_items(logged_in_user):
         3) Navigate to cart page
         4) Verify count matches expected number
     """
-    # Add 4 items
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bolt T-Shirt")
@@ -270,7 +258,7 @@ def test_cart_item_count_matches_added_items(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.cart_items_count == 4, "Cart should contain 4 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(4)
 
 
 @pytest.mark.test_case_key("DEV-60")
@@ -304,10 +292,8 @@ def test_cart_item_prices_are_correct(logged_in_user, product_name, expected_pri
     logged_in_user.inventory_page.click_cart_icon()
 
     prices = logged_in_user.cart_page.get_cart_item_prices()
-    assert len(prices) == 1, "Should have 1 item"
-    assert (
-        abs(prices[0] - expected_price) < 0.01
-    ), f"Expected {product_name} price to be ${expected_price}, got ${prices[0]}"
+    reporter.assert_that(len(prices)).is_equal_to(1)
+    reporter.assert_that(abs(prices[0] - expected_price)).is_less_than(0.01)
 
 
 @pytest.mark.test_case_key("DEV-58")
@@ -331,7 +317,7 @@ def test_cart_item_quantities_default_to_one(logged_in_user):
     logged_in_user.inventory_page.click_cart_icon()
 
     quantities = logged_in_user.cart_page.get_cart_item_quantities()
-    assert quantities == [1, 1], "All items should have quantity of 1"
+    reporter.assert_that(quantities).is_equal_to([1, 1])
 
 
 @pytest.mark.test_case_key("DEV-59")
@@ -353,9 +339,9 @@ def test_is_item_in_cart_returns_true_for_existing_item(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.is_item_in_cart(
-        "Sauce Labs Backpack"
-    ), "Should find Backpack in cart"
+    reporter.assert_that(
+        logged_in_user.cart_page.is_item_in_cart("Sauce Labs Backpack")
+    ).is_true()
 
 
 @pytest.mark.test_case_key("DEV-61")
@@ -373,24 +359,21 @@ def test_multiple_add_and_remove_operations(logged_in_user):
         3) Add more items and verify
         4) Verify final state is correct
     """
-    # Add initial items
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 2
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
-    # Remove one item
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
-    assert logged_in_user.cart_page.cart_items_count == 1
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(1)
 
-    # Go back and add more items
     logged_in_user.cart_page.click_continue_shopping()
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bolt T-Shirt")
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Fleece Jacket")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 3, "Should have 3 items total"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
 
 @pytest.mark.test_case_key("DEV-40")
@@ -414,18 +397,16 @@ def test_cart_items_display_correctly(logged_in_user):
 
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert (
-        logged_in_user.cart_page.page_title == "Your Cart"
-    ), "Cart page should display 'Your Cart' title"
-    assert logged_in_user.cart_page.cart_items_count == 2, "Should have 2 items in cart"
+    reporter.assert_that(logged_in_user.cart_page.page_title).is_equal_to("Your Cart")
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     cart_items = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" in cart_items, "Backpack should be in cart"
-    assert "Sauce Labs Bike Light" in cart_items, "Bike Light should be in cart"
+    reporter.assert_that(cart_items).contains("Sauce Labs Backpack")
+    reporter.assert_that(cart_items).contains("Sauce Labs Bike Light")
 
     prices = logged_in_user.cart_page.get_cart_item_prices()
-    assert len(prices) == 2, "Should have 2 prices"
-    assert all(price > 0 for price in prices), "All prices should be greater than 0"
+    reporter.assert_that(len(prices)).is_equal_to(2)
+    reporter.assert_that(all(price > 0 for price in prices)).is_true()
 
 
 @pytest.mark.test_case_key("DEV-33")
@@ -451,19 +432,17 @@ def test_remove_single_item_from_cart(logged_in_user):
     logged_in_user.inventory_page.click_cart_icon()
 
     initial_count = logged_in_user.cart_page.cart_items_count
-    assert initial_count == 3, "Should start with 3 items"
+    reporter.assert_that(initial_count).is_equal_to(3)
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
 
-    assert (
-        logged_in_user.cart_page.cart_items_count == 2
-    ), "Should have 2 items after removal"
-    assert logged_in_user.cart_page.cart_badge_count == "2", "Cart badge should show 2"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
+    reporter.assert_that(logged_in_user.cart_page.cart_badge_count).is_equal_to("2")
 
     remaining_items = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" not in remaining_items, "Backpack should be removed"
-    assert "Sauce Labs Bike Light" in remaining_items, "Bike Light should remain"
-    assert "Sauce Labs Bolt T-Shirt" in remaining_items, "Bolt T-Shirt should remain"
+    reporter.assert_that(remaining_items).does_not_contain("Sauce Labs Backpack")
+    reporter.assert_that(remaining_items).contains("Sauce Labs Bike Light")
+    reporter.assert_that(remaining_items).contains("Sauce Labs Bolt T-Shirt")
 
 
 @pytest.mark.test_case_key("DEV-32")
@@ -487,27 +466,19 @@ def test_continue_shopping_navigation(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Fleece Jacket")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 2, "Should have 2 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     logged_in_user.cart_page.click_continue_shopping()
 
-    assert (
-        "/inventory.html" in logged_in_user.page.url
-    ), "Should navigate to inventory page"
-    assert (
-        logged_in_user.cart_page.cart_badge_count == "2"
-    ), "Cart badge should persist with 2 items"
+    reporter.assert_that(logged_in_user.page.url).contains("/inventory.html")
+    reporter.assert_that(logged_in_user.cart_page.cart_badge_count).is_equal_to("2")
 
     logged_in_user.cart_page.click_cart_icon()
-    assert (
-        logged_in_user.cart_page.cart_items_count == 2
-    ), "Cart should still have 2 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     cart_items = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" in cart_items, "Original items should be preserved"
-    assert (
-        "Sauce Labs Fleece Jacket" in cart_items
-    ), "Original items should be preserved"
+    reporter.assert_that(cart_items).contains("Sauce Labs Backpack")
+    reporter.assert_that(cart_items).contains("Sauce Labs Fleece Jacket")
 
 
 @pytest.mark.test_case_key("DEV-39")
@@ -530,16 +501,14 @@ def test_checkout_button_navigation(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Backpack")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert (
+    reporter.assert_that(
         logged_in_user.cart_page.is_checkout_button_visible()
-    ), "Checkout button should be visible"
+    ).is_true()
 
     logged_in_user.cart_page.click_checkout()
 
-    assert (
-        "/checkout-step-one.html" in logged_in_user.page.url
-    ), "Should navigate to checkout page"
-    assert logged_in_user.cart_page.cart_badge_count == "2", "Cart badge should persist"
+    reporter.assert_that(logged_in_user.page.url).contains("/checkout-step-one.html")
+    reporter.assert_that(logged_in_user.cart_page.cart_badge_count).is_equal_to("2")
 
 
 @pytest.mark.test_case_key("DEV-36")
@@ -559,13 +528,11 @@ def test_empty_cart_checkout_behavior(logged_in_user):
     """
     logged_in_user.inventory_page.click_cart_icon()
 
-    assert logged_in_user.cart_page.is_empty(), "Cart should be empty"
-    assert (
-        logged_in_user.cart_page.cart_badge_count == ""
-    ), "Cart badge should not display"
-    assert (
+    reporter.assert_that(logged_in_user.cart_page.is_empty()).is_true()
+    reporter.assert_that(logged_in_user.cart_page.cart_badge_count).is_equal_to("")
+    reporter.assert_that(
         logged_in_user.cart_page.is_continue_shopping_button_visible()
-    ), "Continue Shopping should be visible"
+    ).is_true()
 
 
 @pytest.mark.test_case_key("DEV-41")
@@ -591,24 +558,20 @@ def test_cart_persistence_across_navigation(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bolt T-Shirt")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 3, "Should have 3 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
     logged_in_user.cart_page.click_continue_shopping()
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert (
-        logged_in_user.cart_page.cart_items_count == 3
-    ), "Items should persist after navigation"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
     logged_in_user.page.reload()
-    assert (
-        logged_in_user.cart_page.cart_items_count == 3
-    ), "Items should persist after refresh"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(3)
 
     cart_items = logged_in_user.cart_page.get_cart_item_names()
-    assert "Sauce Labs Backpack" in cart_items
-    assert "Sauce Labs Bike Light" in cart_items
-    assert "Sauce Labs Bolt T-Shirt" in cart_items
+    reporter.assert_that(cart_items).contains("Sauce Labs Backpack")
+    reporter.assert_that(cart_items).contains("Sauce Labs Bike Light")
+    reporter.assert_that(cart_items).contains("Sauce Labs Bolt T-Shirt")
 
 
 @pytest.mark.test_case_key("DEV-38")
@@ -634,9 +597,7 @@ def test_hamburger_menu_navigation_from_cart(logged_in_user):
     logged_in_user.hamburger_menu.open_menu()
     logged_in_user.hamburger_menu.click_all_items()
 
-    assert (
-        "/inventory.html" in logged_in_user.page.url
-    ), "Should navigate to inventory page"
+    reporter.assert_that(logged_in_user.page.url).contains("/inventory.html")
 
     logged_in_user.inventory_page.click_cart_icon()
 
@@ -646,7 +607,7 @@ def test_hamburger_menu_navigation_from_cart(logged_in_user):
 
     logged_in_user.page.reload()
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.is_empty(), "Cart should be cleared after reset"
+    reporter.assert_that(logged_in_user.cart_page.is_empty()).is_true()
 
 
 @pytest.mark.test_case_key("DEV-34")
@@ -670,28 +631,24 @@ def test_browser_back_button_handling(logged_in_user):
     logged_in_user.inventory_page.add_item_to_cart("Sauce Labs Bike Light")
 
     logged_in_user.inventory_page.click_cart_icon()
-    assert logged_in_user.cart_page.cart_items_count == 2, "Should have 2 items"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     logged_in_user.cart_page.click_continue_shopping()
-    assert "/inventory.html" in logged_in_user.page.url, "Should be on inventory page"
+    reporter.assert_that(logged_in_user.page.url).contains("/inventory.html")
 
     logged_in_user.page.go_back()
-    assert "/cart.html" in logged_in_user.page.url, "Should return to cart page"
-    assert logged_in_user.cart_page.cart_items_count == 2, "Items should be intact"
+    reporter.assert_that(logged_in_user.page.url).contains("/cart.html")
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(2)
 
     logged_in_user.page.go_forward()
-    assert "/inventory.html" in logged_in_user.page.url, "Forward button should work"
+    reporter.assert_that(logged_in_user.page.url).contains("/inventory.html")
 
     logged_in_user.page.go_back()
 
     logged_in_user.cart_page.remove_item_by_name("Sauce Labs Backpack")
-    assert (
-        logged_in_user.cart_page.cart_items_count == 1
-    ), "Should have 1 item after removal"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(1)
 
     logged_in_user.cart_page.click_continue_shopping()
     logged_in_user.page.go_back()
 
-    assert (
-        logged_in_user.cart_page.cart_items_count == 1
-    ), "Should reflect updated state, not stale data"
+    reporter.assert_that(logged_in_user.cart_page.cart_items_count).is_equal_to(1)
