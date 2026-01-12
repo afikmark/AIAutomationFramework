@@ -21,6 +21,7 @@ pipeline {
                 sh '''
                     python --version
                     pip install --upgrade pip uv
+                    export PATH="$HOME/.local/bin:$PATH"
                     uv pip install --system .
                     uv pip install --system allure-pytest
                     playwright install --with-deps chromium
