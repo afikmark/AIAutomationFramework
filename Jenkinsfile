@@ -31,42 +31,55 @@ pipeline {
         
         stage('Run Tests') {
             steps {
-                sh '''
-                    pytest tests/ \
-                        --alluredir=${ALLURE_RESULTS_PATH} \
-                        --tb=short \
-                        --verbose \
-                        || true
-                '''
+                script {
+                    def testResult = sh(
+                        script: '''
+                            pytest tests/ \
+                                --alluredir=${ALLURE_RESULTS_PATH} \
+                                --junitxml=test-results.xml \
+                                --tb=short \
+                                --verbose
+                        ''',
+                        returnStatus: true
+                    )
+                    env.TEST_EXIT_CODE = testResult.toString()
+                }
             }
         }
         
         stage('Generate Allure Report') {
             steps {
-                script {
-                    allure([
-                        includeProperties: false,
-                        jdk: '',
-                        properties: [],
-                        reportBuildPolicy: 'ALWAYS',
-                        results: [[path: "${env.ALLURE_RESULTS_PATH}"]]
-                    ])
-                }
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    properties: [],
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: "${env.ALLURE_RESULTS_PATH}"]]
+                ])
             }
         }
     }
     
     post {
         always {
-            junit testResults: '**/allure-results/*.xml', allowEmptyResults: true
-            archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
+            junit testResults: 'test-results.xml', allowEmptyResults: true
+            archiveArtifacts artifacts: 'allure-results/**/*,test-results.xml', allowEmptyArchive: true
             cleanWs()
         }
         success {
-            echo 'All tests passed!'
+            script {
+                if (env.TEST_EXIT_CODE == '0') {
+                    echo 'All tests passed!'
+                } else {
+                    echo "Build successful but some tests may have issues. Exit code: ${env.TEST_EXIT_CODE}"
+                }
+            }
         }
         failure {
-            echo 'Some tests failed. Check the Allure report for details.'
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+        unstable {
+            echo 'Some tests failed. Check the test results for details.'
         }
     }
 }
