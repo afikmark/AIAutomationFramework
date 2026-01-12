@@ -63,6 +63,9 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
+                    // Create allure-results directory with proper permissions
+                    sh "mkdir -p ${ALLURE_RESULTS} && chmod 777 ${ALLURE_RESULTS}"
+
                     def pytestArgs = [
                         '--alluredir=/app/allure-results',
                         "--base-url=${params.BASE_URL}"
@@ -78,13 +81,19 @@ pipeline {
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
 
+                    // Run container with Jenkins user ID to avoid permission issues
                     sh """
                         docker run --rm \
+                            --user \$(id -u):\$(id -g) \
                             -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
                             -e BASE_URL=${params.BASE_URL} \
+                            -e HOME=/tmp \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
                             ${pytestCommand}
                     """
+
+                    // Fix permissions on allure-results after test run
+                    sh "chmod -R 755 ${ALLURE_RESULTS} || true"
                 }
             }
         }
