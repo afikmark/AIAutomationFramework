@@ -1,86 +1,64 @@
 pipeline {
-    agent { 
-        docker { 
+    agent {
+        docker {
+            // Using a Playwright-ready image to save time on system dependencies
             image 'mcr.microsoft.com/playwright/python:v1.49.0-noble'
-        } 
+            args  '--user root' // Ensure permissions to create directories
+        }
     }
-    
+
     environment {
-        ALLURE_RESULTS_PATH = 'allure-results'
+        // Force Python to output logs immediately to Jenkins console
+        PYTHONUNBUFFERED = '1'
+        PYTHONDONTWRITEBYTECODE = '1'
     }
-    
+
     stages {
-        stage('Checkout') {
+        stage('Initialize') {
             steps {
-                checkout scm
+                sh 'python3 --version'
+                // Install the project and dependencies directly into the container
+                sh 'pip install --upgrade pip'
+                sh 'pip install -e .[dev]'
             }
         }
-        
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                    python --version
-                    pip install --upgrade pip uv
-                    export PATH="$HOME/.local/bin:$PATH"
-                    uv pip install --system .
-                    uv pip install --system allure-pytest
-                    playwright install --with-deps chromium
-                '''
+
+        stage('Static Analysis') {
+            parallel {
+                stage('Linting') {
+                    steps {
+                        sh 'black --check .'
+                    }
+                }
+                stage('Type Checking') {
+                    steps {
+                        sh 'mypy .'
+                    }
+                }
             }
         }
-        
-        stage('Run Tests') {
+
+        stage('Execute Automation') {
             steps {
                 script {
-                    def testResult = sh(
-                        script: '''
-                            export PYTHONPATH="${WORKSPACE}:${PYTHONPATH}"
-                            pytest tests/ \
-                                --alluredir=${ALLURE_RESULTS_PATH} \
-                                --junitxml=test-results.xml \
-                                --tb=short \
-                                --verbose
-                        ''',
-                        returnStatus: true
-                    )
-                    env.TEST_EXIT_CODE = testResult.toString()
+                    // Running with xdist for speed and allure for reporting
+                    sh 'pytest -n auto --alluredir=allure-results'
                 }
-            }
-        }
-        
-        stage('Generate Allure Report') {
-            steps {
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    properties: [],
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[path: "${env.ALLURE_RESULTS_PATH}"]]
-                ])
             }
         }
     }
-    
+
     post {
         always {
-            junit testResults: 'test-results.xml', allowEmptyResults: true
-            archiveArtifacts artifacts: 'allure-results/**/*,test-results.xml', allowEmptyArchive: true
+            // Archive the Allure results for the Jenkins plugin
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            
+            // Archive local screenshots/logs as artifacts for quick debugging
+            archiveArtifacts artifacts: 'allure-results/*.png', allowEmptyArchive: true
+        }
+        cleanup {
+            // Remove build artifacts to keep the workspace light
             cleanWs()
-        }
-        success {
-            script {
-                if (env.TEST_EXIT_CODE == '0') {
-                    echo 'All tests passed!'
-                } else {
-                    echo "Build successful but some tests may have issues. Exit code: ${env.TEST_EXIT_CODE}"
-                }
-            }
-        }
-        failure {
-            echo 'Pipeline failed. Check the logs for details.'
-        }
-        unstable {
-            echo 'Some tests failed. Check the test results for details.'
         }
     }
 }
