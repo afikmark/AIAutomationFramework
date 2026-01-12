@@ -2,7 +2,6 @@ pipeline {
     agent { 
         docker { 
             image 'mcr.microsoft.com/playwright/python:v1.49.0-noble'
-            args '--user root'
         } 
     }
     
@@ -34,6 +33,7 @@ pipeline {
                 script {
                     def testResult = sh(
                         script: '''
+                            export PYTHONPATH="${WORKSPACE}:${PYTHONPATH}"
                             pytest tests/ \
                                 --alluredir=${ALLURE_RESULTS_PATH} \
                                 --junitxml=test-results.xml \
