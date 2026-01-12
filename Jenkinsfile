@@ -1,48 +1,90 @@
 pipeline {
-    agent {
-        docker {
-            // Using a Playwright-ready image to save time on system dependencies
-            image 'mcr.microsoft.com/playwright/python:v1.49.0-noble'
-            args  '--user root' // Ensure permissions to create directories
-        }
+    agent any
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timestamps()
     }
 
     environment {
-        // Force Python to output logs immediately to Jenkins console
-        PYTHONUNBUFFERED = '1'
-        PYTHONDONTWRITEBYTECODE = '1'
+        DOCKER_BUILDKIT = '1'
+        BASE_IMAGE = 'ai-automation-framework-base'
+        TEST_IMAGE = 'ai-automation-framework-test'
+        ALLURE_RESULTS = 'allure-results'
+    }
+
+    parameters {
+        string(name: 'TEST_MARKERS', defaultValue: '', description: 'Pytest markers to run (e.g., "sanity" or "not slow")')
+        string(name: 'BASE_URL', defaultValue: 'https://www.saucedemo.com', description: 'Base URL for tests')
+        string(name: 'PARALLEL_WORKERS', defaultValue: 'auto', description: 'Number of parallel workers for pytest-xdist')
+        booleanParam(name: 'REBUILD_BASE_IMAGE', defaultValue: false, description: 'Force rebuild of the base Docker image')
     }
 
     stages {
-        stage('Initialize') {
+        stage('Checkout') {
             steps {
-                sh 'python3 --version'
-                // Install the project and dependencies directly into the container
-                sh 'pip install --upgrade pip'
-                sh 'pip install -e .[dev]'
+                checkout scm
             }
         }
 
-        stage('Static Analysis') {
-            parallel {
-                stage('Linting') {
-                    steps {
-                        sh 'black --check .'
-                    }
-                }
-                stage('Type Checking') {
-                    steps {
-                        sh 'mypy .'
+        stage('Build Base Image') {
+            when {
+                anyOf {
+                    expression { params.REBUILD_BASE_IMAGE }
+                    not { 
+                        expression { 
+                            return sh(script: "docker images -q ${BASE_IMAGE}:latest", returnStdout: true).trim() 
+                        } 
                     }
                 }
             }
-        }
-
-        stage('Execute Automation') {
             steps {
                 script {
-                    // Running with xdist for speed and allure for reporting
-                    sh 'pytest -n auto --alluredir=allure-results'
+                    docker.build("${BASE_IMAGE}:latest", "-f ci/base.Dockerfile .")
+                }
+            }
+        }
+
+        stage('Build Test Image') {
+            steps {
+                script {
+                    // Ensure base image exists
+                    def baseImageExists = sh(script: "docker images -q ${BASE_IMAGE}:latest", returnStdout: true).trim()
+                    if (!baseImageExists) {
+                        docker.build("${BASE_IMAGE}:latest", "-f ci/base.Dockerfile .")
+                    }
+                    docker.build("${TEST_IMAGE}:${BUILD_NUMBER}", "-f ci/test.Dockerfile .")
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    def pytestArgs = [
+                        '--alluredir=/app/allure-results',
+                        "--base-url=${params.BASE_URL}"
+                    ]
+
+                    if (params.TEST_MARKERS?.trim()) {
+                        pytestArgs.add("-m '${params.TEST_MARKERS}'")
+                    }
+
+                    if (params.PARALLEL_WORKERS != '1') {
+                        pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
+                    }
+
+                    def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
+
+                    sh """
+                        docker run --rm \
+                            -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
+                            -e BASE_URL=${params.BASE_URL} \
+                            ${TEST_IMAGE}:${BUILD_NUMBER} \
+                            ${pytestCommand}
+                    """
                 }
             }
         }
@@ -50,14 +92,33 @@ pipeline {
 
     post {
         always {
-            // Archive the Allure results for the Jenkins plugin
-            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            
-            // Archive local screenshots/logs as artifacts for quick debugging
-            archiveArtifacts artifacts: 'allure-results/*.png', allowEmptyArchive: true
+            script {
+                // Generate Allure report
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: "${ALLURE_RESULTS}"]]
+                ])
+            }
+
+            // Clean up Docker images
+            sh """
+                docker rmi ${TEST_IMAGE}:${BUILD_NUMBER} || true
+            """
+
+            // Archive test artifacts
+            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
         }
+
+        success {
+            echo 'Tests passed successfully!'
+        }
+
+        failure {
+            echo 'Tests failed. Check the Allure report for details.'
+        }
+
         cleanup {
-            // Remove build artifacts to keep the workspace light
             cleanWs()
         }
     }
