@@ -20,9 +20,9 @@ pipeline {
             steps {
                 sh '''
                     python --version
-                    pip install --upgrade pip
-                    pip install .
-                    pip install allure-pytest
+                    pip install --upgrade pip uv
+                    uv pip install --system .
+                    uv pip install --system allure-pytest
                     playwright install --with-deps chromium
                 '''
             }
