@@ -101,22 +101,28 @@ pipeline {
 
     post {
         always {
+            // Archive test artifacts first (before any cleanup)
+            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
+
             script {
-                // Generate Allure report
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: "${ALLURE_RESULTS}"]]
-                ])
+                // Generate Allure report if plugin is configured
+                try {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        commandline: 'allure',
+                        results: [[path: "${ALLURE_RESULTS}"]]
+                    ])
+                } catch (Exception e) {
+                    echo "Allure report generation skipped: ${e.message}"
+                    echo "To enable Allure reports, configure Allure Commandline in Jenkins Global Tool Configuration"
+                }
             }
 
             // Clean up Docker images
             sh """
                 docker rmi ${TEST_IMAGE}:${BUILD_NUMBER} || true
             """
-
-            // Archive test artifacts
-            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
         }
 
         success {

@@ -12,5 +12,8 @@ RUN uv run playwright install --with-deps chromium
 # Copy the rest of the application
 COPY . .
 
+# Make .venv and app directory writable for any user (needed for Jenkins user mapping)
+RUN chmod -R 777 /app/.venv /app
+
 # Set default command to run tests
 CMD ["uv", "run", "pytest", "--alluredir=allure-results"]
