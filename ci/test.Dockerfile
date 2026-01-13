@@ -1,5 +1,8 @@
 FROM ai-automation-framework-base:latest
 
+# Set Playwright browsers path to a fixed location (not dependent on HOME)
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
+
 # Copy dependency files first for better caching
 COPY pyproject.toml uv.lock* ./
 
