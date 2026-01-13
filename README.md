@@ -8,6 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Enabled-brightgreen.svg)](https://modelcontextprotocol.io/)
 [![Build Status](http://192.168.1.216:8080/job/automation-pipeline/job/main/badge/icon)](http://192.168.1.216:8080/job/automation-pipeline/job/main/)
+[![Build Status](http://192.168.1.216:8080/buildStatus/icon?job=automation-pipeline%2Fmain)](http://192.168.1.216:8080/job/automation-pipeline/job/main/)
 
 ---
 
