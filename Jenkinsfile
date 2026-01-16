@@ -98,13 +98,15 @@ pipeline {
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            bash -c "
-                                ${pytestCommand} && \
-                                echo 'Files created in /app/allure-results:' && \
-                                ls -la /app/allure-results && \
-                                echo 'File count:' && \
-                                find /app/allure-results -type f | wc -l
-                            "
+                            ${pytestCommand}
+                    """
+                    
+                    // Debug: Check inside the container what was created
+                    sh """
+                        docker run --rm \
+                            -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
+                            ${TEST_IMAGE}:${BUILD_NUMBER} \
+                            sh -c 'echo "Container allure-results:" && ls -la /app/allure-results && echo "File count:" && find /app/allure-results -type f | wc -l'
                     """
 
                     // Fix permissions on allure-results after test run
