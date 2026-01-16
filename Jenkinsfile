@@ -84,9 +84,10 @@ pipeline {
                         params.PYTEST_ARGS
                     ]
 
-                    if (params.PARALLEL_WORKERS != '1') {
-                        pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
-                    }
+                    // Temporarily disable parallel execution for debugging
+                    // if (params.PARALLEL_WORKERS != '1') {
+                    //     pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
+                    // }
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
 
