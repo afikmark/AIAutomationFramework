@@ -30,8 +30,13 @@ COPY pyproject.toml uv.lock ./
 # Install Python dependencies
 RUN uv sync --frozen --no-dev
 
-# Install Playwright browsers
-RUN uv run playwright install chromium --with-deps
+# Install Playwright browsers with proper permissions
+# Set HOME to /tmp so Playwright cache is accessible to all users
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN mkdir -p /ms-playwright && \
+    chmod -R 777 /ms-playwright && \
+    uv run playwright install chromium --with-deps && \
+    chmod -R 777 /ms-playwright
 
 # Copy application code
 COPY . .

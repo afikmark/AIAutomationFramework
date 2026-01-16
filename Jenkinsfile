@@ -95,6 +95,7 @@ pipeline {
                             -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
                             -e BASE_URL=${params.BASE_URL} \
                             -e HOME=/tmp \
+                            -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
                             ${pytestCommand}
                     """
