@@ -30,19 +30,19 @@ pipeline {
         }
 
         stage('Build Base Image') {
-            when {
-                anyOf {
-                    expression { params.REBUILD_BASE_IMAGE }
-                    not { 
-                        expression { 
-                            return sh(script: "docker images -q ${BASE_IMAGE}:latest", returnStdout: true).trim() 
-                        } 
-                    }
-                }
-            }
             steps {
                 script {
-                    docker.build("${BASE_IMAGE}:latest", "-f ci/base.Dockerfile .")
+                    def baseImageExists = sh(
+                        script: "docker images -q ${BASE_IMAGE}:latest 2>/dev/null",
+                        returnStatus: true
+                    ) == 0
+                    
+                    if (params.REBUILD_BASE_IMAGE || !baseImageExists) {
+                        echo "Building base image..."
+                        docker.build("${BASE_IMAGE}:latest", "-f ci/base.Dockerfile .")
+                    } else {
+                        echo "Base image exists, skipping build. Use REBUILD_BASE_IMAGE=true to force rebuild."
+                    }
                 }
             }
         }
@@ -51,10 +51,17 @@ pipeline {
             steps {
                 script {
                     // Ensure base image exists
-                    def baseImageExists = sh(script: "docker images -q ${BASE_IMAGE}:latest", returnStdout: true).trim()
+                    def baseImageExists = sh(
+                        script: "docker images -q ${BASE_IMAGE}:latest 2>/dev/null",
+                        returnStatus: true
+                    ) == 0
+                    
                     if (!baseImageExists) {
+                        echo "Base image not found, building it first..."
                         docker.build("${BASE_IMAGE}:latest", "-f ci/base.Dockerfile .")
                     }
+                    
+                    echo "Building test image..."
                     docker.build("${TEST_IMAGE}:${BUILD_NUMBER}", "-f ci/test.Dockerfile .")
                 }
             }
