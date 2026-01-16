@@ -26,13 +26,11 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    echo "Checking out branch: ${params.BRANCH}"
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: "*/${params.BRANCH}"]],
                         userRemoteConfigs: scm.userRemoteConfigs
                     ])
-                    echo "Successfully checked out branch: ${params.BRANCH}"
                 }
             }
         }
@@ -78,18 +76,17 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Create allure-results directory with proper permissions
-                    sh "mkdir -p ${ALLURE_RESULTS} && chmod 777 ${ALLURE_RESULTS}"
+                    // Clean and create allure-results directory with proper permissions
+                    sh "rm -rf ${ALLURE_RESULTS} && mkdir -p ${ALLURE_RESULTS} && chmod 777 ${ALLURE_RESULTS}"
 
                     def pytestArgs = [
                         '--alluredir=/app/allure-results',
                         params.PYTEST_ARGS
                     ]
 
-                    // Temporarily disable parallel execution for debugging
-                    // if (params.PARALLEL_WORKERS != '1') {
-                    //     pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
-                    // }
+                    if (params.PARALLEL_WORKERS != '1') {
+                        pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
+                    }
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
 
@@ -103,25 +100,9 @@ pipeline {
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
                             ${pytestCommand}
                     """
-                    
-                    // Debug: Check inside the container what was created
-                    sh """
-                        docker run --rm \
-                            -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
-                            ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            sh -c 'echo "Container allure-results:" && ls -la /app/allure-results && echo "File count:" && find /app/allure-results -type f | wc -l'
-                    """
 
                     // Fix permissions on allure-results after test run
                     sh "chmod -R 755 ${ALLURE_RESULTS} || true"
-                    
-                    // Debug: Check what was actually written to the host
-                    sh """
-                        echo "Host allure-results directory:"
-                        ls -la ${ALLURE_RESULTS}
-                        echo "Host file count:"
-                        find ${ALLURE_RESULTS} -type f 2>/dev/null | wc -l
-                    """
                 }
             }
         }
@@ -129,33 +110,20 @@ pipeline {
 
     post {
         always {
-            script {
-                // Debug: Check what's in the allure-results directory
-                sh """
-                    echo "Checking allure-results directory:"
-                    ls -la ${ALLURE_RESULTS} || echo "Directory not found"
-                    echo "File count:"
-                    find ${ALLURE_RESULTS} -type f | wc -l || echo "0"
-                """
-                
-                // Archive test artifacts
-                archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
+            // Archive test artifacts first (before any cleanup)
+            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
 
-                // Generate Allure report if results exist
-                def resultsExist = fileExists("${ALLURE_RESULTS}")
-                if (resultsExist) {
-                    try {
-                        allure([
-                            includeProperties: false,
-                            jdk: '',
-                            results: [[path: "${ALLURE_RESULTS}"]]
-                        ])
-                    } catch (Exception e) {
-                        echo "Allure report generation failed: ${e.message}"
-                        echo "Check that Allure Commandline is properly configured in Global Tool Configuration"
-                    }
-                } else {
-                    echo "No allure-results directory found"
+            script {
+                // Generate Allure report if plugin is configured
+                try {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        results: [[path: "${ALLURE_RESULTS}"]]
+                    ])
+                } catch (Exception e) {
+                    echo "Allure report generation skipped: ${e.message}"
+                    echo "To enable Allure reports, configure Allure Commandline in Jenkins Global Tool Configuration"
                 }
             }
 
