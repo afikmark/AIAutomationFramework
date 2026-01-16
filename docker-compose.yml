@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-automation
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    environment:
+      - JENKINS_OPTS=--httpPort=8080
+      - JENKINS_USER=admin
+      - JENKINS_PASS=admin
+    networks:
+      - jenkins-network
+    restart: unless-stopped
+
+  # Optional: Local Docker registry for image caching
+  registry:
+    image: registry:2
+    container_name: local-registry
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry_data:/var/lib/registry
+    networks:
+      - jenkins-network
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
+  registry_data:
+
+networks:
+  jenkins-network:
+    driver: bridge
