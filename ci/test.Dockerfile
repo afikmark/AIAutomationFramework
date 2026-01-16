@@ -1,26 +1,11 @@
-FROM --platform=$BUILDPLATFORM python:3.12-slim-bullseye
+FROM ai-automation-framework-base:latest
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget \
-    zip \
-    unzip \
-    curl \
-    ca-certificates \
-    gnupg \
-    git \
-    chromium \
-    chromium-driver \
-    && rm -rf /var/lib/apt/lists/*
+COPY pyproject.toml uv.lock ./
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+RUN uv sync --frozen --no-dev
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy \
-    CHROME_BIN=/usr/bin/chromium \
-    CHROMEDRIVER_PATH=/usr/bin/chromedriver
+COPY . .
 
-WORKDIR /app
+RUN chmod -R 777 /app
+
+CMD ["uv", "run", "pytest"]
