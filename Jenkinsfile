@@ -29,14 +29,6 @@ pipeline {
                 checkout scm
             }
         }
-    stage('Setup Docker Client') {
-    steps {
-        sh '''
-            apt-get update
-            apt-get install -y docker.io
-        '''
-    }
-}
 
         stage('Build Base Image') {
             when {
