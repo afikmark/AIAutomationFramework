@@ -99,7 +99,7 @@ pipeline {
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            sh -c '${pytestCommand} && echo "=== Files in /app/allure-results ===" && ls -la /app/allure-results && echo "File count: \$(find /app/allure-results -type f | wc -l)"'
+                            sh -c 'rm -rf /app/allure-results/* && ${pytestCommand} && echo "=== Files in /app/allure-results ===" && ls -la /app/allure-results && echo "File count: \$(find /app/allure-results -type f | wc -l)"'
                     """
 
                     // Debug: Check files inside container immediately after test run
