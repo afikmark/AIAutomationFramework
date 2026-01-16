@@ -86,6 +86,7 @@ pipeline {
 
                     if (params.PARALLEL_WORKERS != '1') {
                         pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
+                        pytestArgs.add("--dist worksteal")
                     }
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
@@ -98,7 +99,14 @@ pipeline {
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            ${pytestCommand}
+                            sh -c '${pytestCommand} && echo "=== Files in /app/allure-results ===" && ls -la /app/allure-results && echo "File count: \$(find /app/allure-results -type f | wc -l)"'
+                    """
+
+                    // Debug: Check files inside container immediately after test run
+                    sh """
+                        echo "=== Checking allure-results on Jenkins host ==="
+                        ls -la ${ALLURE_RESULTS} || echo "Directory not found"
+                        echo "File count: \$(find ${ALLURE_RESULTS} -type f 2>/dev/null | wc -l)"
                     """
 
                     // Fix permissions on allure-results after test run
