@@ -10,7 +10,6 @@ pipeline {
 
     environment {
         DOCKER_BUILDKIT = '1'
-        DOCKER_HOST = 'tcp://docker:2375'
         BASE_IMAGE = 'ai-automation-framework-base'
         TEST_IMAGE = 'ai-automation-framework-test'
         ALLURE_RESULTS = 'allure-results'
