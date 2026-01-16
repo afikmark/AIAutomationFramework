@@ -16,8 +16,8 @@ pipeline {
     }
 
     parameters {
-        string(name: 'TEST_MARKERS', defaultValue: '', description: 'Pytest markers to run (e.g., "sanity" or "not slow")')
-        string(name: 'BASE_URL', defaultValue: 'https://www.saucedemo.com', description: 'Base URL for tests')
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to checkout and run tests from')
+        string(name: 'PYTEST_ARGS', defaultValue: 'tests', description: 'Pytest arguments (e.g., "tests -m sanity" or "tests/sauce_ui")')
         string(name: 'PARALLEL_WORKERS', defaultValue: 'auto', description: 'Number of parallel workers for pytest-xdist')
         booleanParam(name: 'REBUILD_BASE_IMAGE', defaultValue: false, description: 'Force rebuild of the base Docker image')
     }
@@ -25,7 +25,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${params.BRANCH}"]],
+                        userRemoteConfigs: scm.userRemoteConfigs
+                    ])
+                }
             }
         }
 
@@ -75,12 +81,8 @@ pipeline {
 
                     def pytestArgs = [
                         '--alluredir=/app/allure-results',
-                        "--base-url=${params.BASE_URL}"
+                        params.PYTEST_ARGS
                     ]
-
-                    if (params.TEST_MARKERS?.trim()) {
-                        pytestArgs.add("-m '${params.TEST_MARKERS}'")
-                    }
 
                     if (params.PARALLEL_WORKERS != '1') {
                         pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
@@ -93,7 +95,6 @@ pipeline {
                         docker run --rm \
                             --user \$(id -u):\$(id -g) \
                             -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
-                            -e BASE_URL=${params.BASE_URL} \
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
