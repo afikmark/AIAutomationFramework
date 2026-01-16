@@ -91,26 +91,27 @@ pipeline {
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
 
-                    // Run container with Jenkins user ID to avoid permission issues
+                    // Run tests in container without volume mount, then copy results out
                     sh """
-                        docker run --rm \
+                        # Run tests with allure results stored inside container
+                        docker run --name test-${BUILD_NUMBER} \
                             --user \$(id -u):\$(id -g) \
-                            -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            sh -c 'rm -rf /app/allure-results/* && ${pytestCommand} && echo "=== Files in /app/allure-results ===" && ls -la /app/allure-results && echo "File count: \$(find /app/allure-results -type f | wc -l)"'
+                            sh -c 'rm -rf /app/allure-results/* && ${pytestCommand}'
+                        
+                        # Copy allure results from container to Jenkins workspace
+                        docker cp test-${BUILD_NUMBER}:/app/allure-results/. \${WORKSPACE}/${ALLURE_RESULTS}/
+                        
+                        # Remove the container
+                        docker rm test-${BUILD_NUMBER}
+                        
+                        # Verify files were copied
+                        echo "=== Allure results on Jenkins host ==="
+                        ls -la ${ALLURE_RESULTS} | head -20
+                        echo "File count: \$(find ${ALLURE_RESULTS} -type f | wc -l)"
                     """
-
-                    // Debug: Check files inside container immediately after test run
-                    sh """
-                        echo "=== Checking allure-results on Jenkins host ==="
-                        ls -la ${ALLURE_RESULTS} || echo "Directory not found"
-                        echo "File count: \$(find ${ALLURE_RESULTS} -type f 2>/dev/null | wc -l)"
-                    """
-
-                    // Fix permissions on allure-results after test run
-                    sh "chmod -R 755 ${ALLURE_RESULTS} || true"
                 }
             }
         }
