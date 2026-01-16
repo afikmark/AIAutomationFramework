@@ -98,11 +98,25 @@ pipeline {
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            ${pytestCommand}
+                            bash -c "
+                                ${pytestCommand} && \
+                                echo 'Files created in /app/allure-results:' && \
+                                ls -la /app/allure-results && \
+                                echo 'File count:' && \
+                                find /app/allure-results -type f | wc -l
+                            "
                     """
 
                     // Fix permissions on allure-results after test run
                     sh "chmod -R 755 ${ALLURE_RESULTS} || true"
+                    
+                    // Debug: Check what was actually written to the host
+                    sh """
+                        echo "Host allure-results directory:"
+                        ls -la ${ALLURE_RESULTS}
+                        echo "Host file count:"
+                        find ${ALLURE_RESULTS} -type f 2>/dev/null | wc -l
+                    """
                 }
             }
         }
