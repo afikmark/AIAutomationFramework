@@ -110,21 +110,33 @@ pipeline {
 
     post {
         always {
-            // Archive test artifacts first (before any cleanup)
-            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
-
             script {
-                // Generate Allure report if plugin is configured
-                try {
-                    allure([
-                        includeProperties: false,
-                        jdk: '',
-                        commandline: 'allure',
-                        results: [[path: "${ALLURE_RESULTS}"]]
-                    ])
-                } catch (Exception e) {
-                    echo "Allure report generation skipped: ${e.message}"
-                    echo "To enable Allure reports, configure Allure Commandline in Jenkins Global Tool Configuration"
+                // Debug: Check what's in the allure-results directory
+                sh """
+                    echo "Checking allure-results directory:"
+                    ls -la ${ALLURE_RESULTS} || echo "Directory not found"
+                    echo "File count:"
+                    find ${ALLURE_RESULTS} -type f | wc -l || echo "0"
+                """
+                
+                // Archive test artifacts
+                archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
+
+                // Generate Allure report if results exist
+                def resultsExist = fileExists("${ALLURE_RESULTS}")
+                if (resultsExist) {
+                    try {
+                        allure([
+                            includeProperties: false,
+                            jdk: '',
+                            results: [[path: "${ALLURE_RESULTS}"]]
+                        ])
+                    } catch (Exception e) {
+                        echo "Allure report generation failed: ${e.message}"
+                        echo "Check that Allure Commandline is properly configured in Global Tool Configuration"
+                    }
+                } else {
+                    echo "No allure-results directory found"
                 }
             }
 
