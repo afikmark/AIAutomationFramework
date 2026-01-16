@@ -1,0 +1,41 @@
+# Exclude test results and reports
+allure-results/
+allure-report/
+.pytest_cache/
+__pycache__/
+
+# Exclude development files
+.venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Exclude IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Exclude git files
+.git/
+.gitignore
+
+# Exclude temporary files
+tmp/
+*.tmp
+*.log
+
+# Exclude Docker files
+.dockerignore
+ci/
+
+# Exclude documentation that's not needed in container
+*.md
+README.md
