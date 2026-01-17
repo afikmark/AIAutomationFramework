@@ -76,8 +76,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Clean and create allure-results directory with proper permissions
-                    sh "rm -rf ${ALLURE_RESULTS} && mkdir -p ${ALLURE_RESULTS} && chmod 777 ${ALLURE_RESULTS}"
+                    // Create allure-results directory with proper permissions
+                    sh "mkdir -p ${ALLURE_RESULTS} && chmod 777 ${ALLURE_RESULTS}"
 
                     def pytestArgs = [
                         '--alluredir=/app/allure-results',
@@ -86,32 +86,23 @@ pipeline {
 
                     if (params.PARALLEL_WORKERS != '1') {
                         pytestArgs.add("-n ${params.PARALLEL_WORKERS}")
-                        pytestArgs.add("--dist worksteal")
                     }
 
                     def pytestCommand = "uv run pytest ${pytestArgs.join(' ')}"
 
-                    // Run tests in container without volume mount, then copy results out
+                    // Run container with Jenkins user ID to avoid permission issues
                     sh """
-                        # Run tests with allure results stored inside container
-                        docker run --name test-${BUILD_NUMBER} \
+                        docker run --rm \
                             --user \$(id -u):\$(id -g) \
+                            -v \${WORKSPACE}/${ALLURE_RESULTS}:/app/allure-results \
                             -e HOME=/tmp \
                             -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
                             ${TEST_IMAGE}:${BUILD_NUMBER} \
-                            sh -c 'rm -rf /app/allure-results/* && ${pytestCommand}'
-                        
-                        # Copy allure results from container to Jenkins workspace
-                        docker cp test-${BUILD_NUMBER}:/app/allure-results/. \${WORKSPACE}/${ALLURE_RESULTS}/
-                        
-                        # Remove the container
-                        docker rm test-${BUILD_NUMBER}
-                        
-                        # Verify files were copied
-                        echo "=== Allure results on Jenkins host ==="
-                        ls -la ${ALLURE_RESULTS} | head -20
-                        echo "File count: \$(find ${ALLURE_RESULTS} -type f | wc -l)"
+                            ${pytestCommand}
                     """
+
+                    // Fix permissions on allure-results after test run
+                    sh "chmod -R 755 ${ALLURE_RESULTS} || true"
                 }
             }
         }
@@ -128,6 +119,7 @@ pipeline {
                     allure([
                         includeProperties: false,
                         jdk: '',
+                        commandline: 'allure-tool',
                         results: [[path: "${ALLURE_RESULTS}"]]
                     ])
                 } catch (Exception e) {

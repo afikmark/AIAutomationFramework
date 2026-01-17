@@ -17,8 +17,6 @@ services:
     networks:
       - jenkins-network
     restart: unless-stopped
-    # Run as root to avoid permission issues with existing volume
-    # The Dockerfile still has Docker CLI installed
     user: root
 
   registry:
