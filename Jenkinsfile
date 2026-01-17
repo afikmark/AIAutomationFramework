@@ -114,12 +114,12 @@ pipeline {
             archiveArtifacts artifacts: "/**/*", allowEmptyArchive: true
 
             script {
-                // Generate Allure report if plugin is configured
+                // Generate Allure report
                 try {
                     allure([
                         includeProperties: false,
                         jdk: '',
-                        commandline: 'allure-tool',
+                        commandline: 'allure',
                         results: [[path: "${ALLURE_RESULTS}"]]
                     ])
                 } catch (Exception e) {
