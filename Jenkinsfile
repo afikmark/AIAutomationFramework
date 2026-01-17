@@ -111,7 +111,7 @@ pipeline {
     post {
         always {
             // Archive test artifacts first (before any cleanup)
-            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "/**/*", allowEmptyArchive: true
 
             script {
                 // Generate Allure report if plugin is configured
